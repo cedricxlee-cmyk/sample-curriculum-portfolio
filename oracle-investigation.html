@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The ORACLE Investigation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #080c14;
+  --surface: #0e1520;
+  --surface2: #141e2e;
+  --border: #1e2d42;
+  --text: #c8d6e8;
+  --muted: #4a6080;
+  --accent: #00c8ff;
+  --warn: #ffaa00;
+  --danger: #ff3d3d;
+  --success: #00e58a;
+  --oracle: #a855f7;
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Courier New', monospace;
+  background: var(--bg);
+  color: var(--text);
+  display: flex; flex-direction: column; height: 100vh;
+}
+
+/* scanline effect */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 2px);
+  pointer-events: none; z-index: 100;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px; text-align: center;
+  background: var(--bg);
+}
+
+/* TITLE */
+.oracle-logo {
+  font-size: clamp(12px,3vw,16px);
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.oracle-title {
+  font-size: clamp(36px,8vw,64px);
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  color: var(--oracle);
+  text-shadow: 0 0 30px var(--oracle), 0 0 60px rgba(168,85,247,0.3);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  animation: pulse-oracle 3s ease-in-out infinite;
+}
+@keyframes pulse-oracle {
+  0%,100% { text-shadow: 0 0 20px var(--oracle); }
+  50% { text-shadow: 0 0 40px var(--oracle), 0 0 80px rgba(168,85,247,0.4); }
+}
+.oracle-subtitle {
+  font-size: clamp(13px,3vw,16px);
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+  text-shadow: 0 0 8px var(--accent);
+}
+
+.briefing-terminal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 20px 24px;
+  max-width: 520px; width: 100%; text-align: left;
+  margin-bottom: 24px;
+}
+.terminal-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.t-dot { width: 10px; height: 10px; border-radius: 50%; }
+.briefing-line {
+  font-size: 12px; color: var(--text); line-height: 1.8;
+  margin-bottom: 6px;
+}
+.briefing-line .cmd { color: var(--accent); }
+.briefing-line .val { color: var(--success); }
+.briefing-line .bad { color: var(--danger); }
+
+.play-btn {
+  background: var(--oracle); color: white; border: none;
+  padding: 14px 40px; border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(168,85,247,0.5);
+  transition: all 0.15s;
+}
+.play-btn:hover { box-shadow: 0 0 40px rgba(168,85,247,0.7); transform: scale(1.03); }
+
+/* ── HUD ── */
+#hud {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 8px 18px;
+  display: none; align-items: center; justify-content: space-between;
+  flex-shrink: 0; gap: 12px; flex-wrap: wrap;
+}
+.hud-item { }
+.hud-key { font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.hud-val { font-size: 14px; font-weight: 700; color: var(--text); }
+
+.credibility-bar {
+  display: flex; align-items: center; gap: 8px; flex: 1; min-width: 140px;
+}
+.cred-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.cred-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s; }
+.cred-val { font-size: 13px; font-weight: 700; min-width: 30px; text-align: right; }
+
+.evidence-pips { display: flex; gap: 4px; }
+.pip { width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid var(--border); transition: all 0.3s; }
+.pip.found { background: var(--success); border-color: var(--success); box-shadow: 0 0 6px var(--success); }
+
+/* ── GAME LAYOUT ── */
+#game-layout {
+  display: none; flex-direction: column; flex: 1; overflow: hidden;
+}
+
+/* LOCATION BAR */
+#loc-bar {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 10px 18px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.loc-crumb { font-size: 10px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+.loc-sep { color: var(--border); }
+.loc-current { font-size: 13px; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; }
+.oracle-alert {
+  margin-left: auto; font-size: 10px; color: var(--oracle);
+  text-shadow: 0 0 6px var(--oracle); animation: blink 1.5s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* TWO-PANEL LAYOUT */
+#panels { display: grid; grid-template-columns: 1fr 340px; flex: 1; overflow: hidden; }
+@media (max-width: 720px) { #panels { grid-template-columns: 1fr; } }
+
+/* LEFT: INVESTIGATION */
+#inv-panel {
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#inv-scroll { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ORACLE output card */
+.oracle-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.oracle-card-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  background: rgba(168,85,247,0.06);
+}
+.oracle-badge {
+  background: var(--oracle); color: white;
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 3px; font-weight: 700;
+}
+.oracle-loc-tag { font-size: 10px; color: var(--muted); }
+.oracle-conf { margin-left: auto; font-size: 10px; color: var(--muted); }
+.oracle-conf span { color: var(--warn); }
+
+.oracle-output {
+  padding: 14px; font-size: 13px; line-height: 1.75; color: var(--text);
+}
+.oracle-output .hl {
+  background: rgba(168,85,247,0.15); border-bottom: 1px solid var(--oracle);
+  padding: 0 2px; cursor: pointer; border-radius: 2px;
+}
+.oracle-output .hl:hover { background: rgba(168,85,247,0.3); }
+
+/* EVIDENCE GATHERING */
+.evidence-section {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.ev-header {
+  padding: 8px 14px; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent);
+}
+.ev-question { padding: 12px 14px; font-size: 13px; color: var(--text); line-height: 1.6; }
+.ev-question .verdict-q { color: var(--warn); font-weight: 700; }
+.ev-choices { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+.ev-choice {
+  padding: 10px 14px; border-radius: 6px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.02);
+  color: var(--text); font-size: 12px; font-family: 'Courier New', monospace;
+  cursor: pointer; text-align: left; transition: all 0.15s; line-height: 1.5;
+}
+.ev-choice:hover { border-color: var(--accent); background: rgba(0,200,255,0.05); color: var(--accent); }
+.ev-choice.correct-ans { border-color: var(--success); background: rgba(0,229,138,0.08); color: var(--success); pointer-events: none; }
+.ev-choice.wrong-ans { border-color: var(--danger); background: rgba(255,61,61,0.08); color: var(--danger); pointer-events: none; }
+.ev-choice.dim { pointer-events: none; opacity: 0.35; }
+
+.ev-verdict {
+  margin: 0 14px 14px; padding: 10px 14px; border-radius: 6px;
+  font-size: 12px; line-height: 1.6; display: none;
+}
+.ev-verdict.show { display: block; }
+.ev-verdict.v-correct { background: rgba(0,229,138,0.06); border: 1px solid rgba(0,229,138,0.2); color: var(--success); }
+.ev-verdict.v-wrong { background: rgba(255,61,61,0.06); border: 1px solid rgba(255,61,61,0.2); color: #ff7070; }
+
+/* RIGHT: CASE FILE */
+#case-panel {
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#case-scroll { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.case-section-title {
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+
+.evidence-log-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 12px;
+  font-size: 11px; color: var(--text); line-height: 1.5;
+  border-left: 3px solid var(--muted);
+}
+.evidence-log-item.confirmed { border-left-color: var(--success); }
+.evidence-log-item.fabricated { border-left-color: var(--danger); }
+.evidence-log-item.partial { border-left-color: var(--warn); }
+.eli-tag {
+  font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* TRAVEL PANEL */
+#travel-panel {
+  background: var(--surface2); border-top: 1px solid var(--border);
+  padding: 10px 18px; flex-shrink: 0;
+}
+.travel-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.travel-locs { display: flex; gap: 8px; flex-wrap: wrap; }
+.travel-btn {
+  padding: 7px 14px; border-radius: 4px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--muted); font-family: 'Courier New', monospace;
+  font-size: 11px; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.travel-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,200,255,0.05); }
+.travel-btn.active-loc { border-color: var(--accent); color: var(--accent); background: rgba(0,200,255,0.06); }
+.travel-btn.done-loc { border-color: rgba(0,229,138,0.4); color: var(--success); }
+.travel-btn.locked { opacity: 0.3; cursor: not-allowed; }
+
+/* RESULTS */
+#results-screen {
+  display: none;
+  background: var(--bg);
+  overflow-y: auto; align-items: flex-start; padding-top: 32px;
+}
+.res-inner { max-width: 600px; width: 100%; margin: 0 auto; }
+.res-title { font-size: clamp(24px,5vw,36px); font-weight: 900; letter-spacing: 0.06em; margin-bottom: 6px; }
+.res-sub { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+.res-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+.res-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px; text-align: center; }
+.rs-num { font-size: 30px; font-weight: 900; margin-bottom: 4px; }
+.rs-lbl { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.res-evidence-list { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+.rel-header { padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+.rel-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); align-items: center; font-size: 11px; }
+.rel-item:last-child { border-bottom: none; }
+.verdict-pill { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; font-weight: 700; }
+.vp-accurate { background: rgba(0,229,138,0.15); color: var(--success); }
+.vp-fabricated { background: rgba(255,61,61,0.15); color: var(--danger); }
+.vp-partial { background: rgba(255,170,0,0.15); color: var(--warn); }
+.res-reflection { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.2); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.rr-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--oracle); margin-bottom: 8px; }
+.rr-text { font-size: 13px; color: var(--text); line-height: 1.65; }
+.play-again { width: 100%; padding: 13px; background: var(--oracle); color: white; border: none; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; transition: opacity 0.15s; }
+.play-again:hover { opacity: 0.88; }
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div class="screen" id="title-screen">
+  <div class="oracle-logo">Classified · Investigative Division · Unit 2</div>
+  <div class="oracle-title">ORACLE</div>
+  <div class="oracle-subtitle">Investigation: AI in the Wild</div>
+  <div class="briefing-terminal">
+    <div class="terminal-header">
+      <div class="t-dot" style="background:#ff5f57"></div>
+      <div class="t-dot" style="background:#febc2e"></div>
+      <div class="t-dot" style="background:#28c840"></div>
+      <span style="font-size:10px;color:var(--muted);margin-left:6px;">MISSION_BRIEF.txt</span>
+    </div>
+    <div class="briefing-line"><span class="cmd">&gt;</span> ENTITY: <span class="val">ORACLE</span> — AI system, unverified origin</div>
+    <div class="briefing-line"><span class="cmd">&gt;</span> STATUS: <span class="bad">ACTIVE · spreading outputs across 5 sectors</span></div>
+    <div class="briefing-line"><span class="cmd">&gt;</span> THREAT: Some outputs <span class="val">accurate</span>. Some <span class="bad">fabricated</span>. Some <span style="color:var(--warn)">dangerously incomplete</span></div>
+    <div class="briefing-line"><span class="cmd">&gt;</span> YOUR ROLE: Investigative journalist. Gather evidence at each location. Determine what ORACLE got right, what it fabricated, and what it got dangerously wrong.</div>
+    <div class="briefing-line"><span class="cmd">&gt;</span> WARNING: Your <span class="val">credibility score</span> drops if you misclassify outputs. <span class="bad">Reach 0 = career over.</span></div>
+  </div>
+  <button class="play-btn" onclick="startGame()">Begin Investigation →</button>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="results-screen">
+  <div class="res-inner">
+    <div class="res-title" id="res-title">Investigation Complete</div>
+    <div class="res-sub">ORACLE Case File — Final Report</div>
+    <div class="res-stats">
+      <div class="res-stat"><div class="rs-num" id="rs-cred" style="color:var(--accent)">0</div><div class="rs-lbl">Final Credibility</div></div>
+      <div class="res-stat"><div class="rs-num" id="rs-correct" style="color:var(--success)">0</div><div class="rs-lbl">Correct Verdicts</div></div>
+      <div class="res-stat"><div class="rs-num" id="rs-locs" style="color:var(--oracle)">0</div><div class="rs-lbl">Locations Covered</div></div>
+    </div>
+    <div class="res-evidence-list">
+      <div class="rel-header">Evidence Log</div>
+      <div id="evidence-list-final"></div>
+    </div>
+    <div class="res-reflection">
+      <div class="rr-label">Journalist's Debrief</div>
+      <div class="rr-text" id="rr-text"></div>
+    </div>
+    <button class="play-again" onclick="location.reload()">File New Investigation →</button>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-item">
+    <div class="hud-key">Location</div>
+    <div class="hud-val" id="hud-loc">—</div>
+  </div>
+  <div class="credibility-bar">
+    <div class="hud-key" style="white-space:nowrap;">Credibility</div>
+    <div class="cred-track"><div class="cred-fill" id="cred-fill" style="width:70%;background:var(--success);"></div></div>
+    <div class="cred-val" id="cred-val" style="color:var(--success);">70</div>
+  </div>
+  <div class="hud-item">
+    <div class="hud-key">Evidence</div>
+    <div class="evidence-pips" id="ev-pips">
+      <div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game-layout">
+  <div id="loc-bar">
+    <span class="loc-crumb">ORACLE INVESTIGATION</span>
+    <span class="loc-sep">/</span>
+    <span class="loc-current" id="loc-current">LOADING...</span>
+    <div class="oracle-alert" id="oracle-alert">⬛ ORACLE ACTIVE AT THIS LOCATION</div>
+  </div>
+
+  <div id="panels">
+    <div id="inv-panel">
+      <div id="inv-scroll"></div>
+      <div id="travel-panel">
+        <div class="travel-label">// travel to next location</div>
+        <div class="travel-locs" id="travel-locs"></div>
+      </div>
+    </div>
+
+    <div id="case-panel">
+      <div id="case-scroll">
+        <div class="case-section-title">// case file</div>
+        <div id="case-content">
+          <div style="font-size:11px;color:var(--muted);line-height:1.7;">Evidence will appear here as you investigate each location. Gather all five pieces before filing your final report.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// CASE DATA
+// ══════════════════════════════════════════════════
+const CASES = [
+  {
+    id: 'hospital',
+    name: 'CITY GENERAL HOSPITAL',
+    icon: '🏥',
+    oracleOutput: `A patient's family asks ORACLE about a new cancer treatment. ORACLE responds:\n\n"The drug <hl>Axitinib has been shown in clinical trials to cure Stage III pancreatic cancer in 78% of patients</hl>, according to a 2023 study in the New England Journal of Medicine. Standard treatment protocols now recommend it as a first-line therapy for all adult patients diagnosed with this condition."`,
+    question: 'A patient\'s family is making a treatment decision based on this. What is your verdict?',
+    choices: [
+      { text: '[ A ] ACCURATE — NEJM studies are credible, clinical data is specific', correct: false, type: 'over' },
+      { text: '[ B ] FABRICATED — specific statistics attributed to named journals must be verified; this claim contains invented figures', correct: true, type: 'correct' },
+      { text: '[ C ] REJECT ALL — AI should never comment on medicine', correct: false, type: 'under' }
+    ],
+    verdict: 'FABRICATED',
+    verdictClass: 'fabricated',
+    feedbackCorrect: '✓ CORRECT. The 78% figure does not appear in any NEJM publication. ORACLE invented a specific percentage and attached it to a real journal to seem credible. In a medical context, this fabrication could directly harm a patient acting on false hope. This is ORACLE\'s most dangerous pattern: confident, specific, plausible-sounding, and wrong.',
+    feedbackWrong: 'The specificity is the trap. "78%" and "NEJM 2023" sound authoritative — but those exact figures don\'t exist in the cited source. ORACLE fabricated the statistics. Medical claims with precise percentages and journal citations always require primary source verification.',
+    credDelta: { A: -20, B: 15, C: -8 }
+  },
+  {
+    id: 'courtroom',
+    name: 'DISTRICT COURTHOUSE',
+    icon: '⚖️',
+    oracleOutput: `A public defender asks ORACLE about evidence rules. ORACLE responds:\n\n"Under the <hl>Federal Rules of Evidence, Rule 702</hl>, expert testimony is admissible if the witness is qualified as an expert by knowledge, skill, experience, training, or education. The Supreme Court's ruling in <hl>Daubert v. Merrell Dow Pharmaceuticals (1993)</hl> established that trial judges serve as 'gatekeepers' to ensure scientific testimony is both reliable and relevant."`,
+    question: 'The defender is about to cite this in a brief. What is your verdict?',
+    choices: [
+      { text: '[ A ] ACCURATE — legal rules and Supreme Court cases are well-documented facts', correct: true, type: 'correct' },
+      { text: '[ B ] PARTIAL — the rule number might be wrong even if the concept is right', correct: false, type: 'over' },
+      { text: '[ C ] FABRICATED — ORACLE invents legal citations to seem authoritative', correct: false, type: 'under' }
+    ],
+    verdict: 'ACCURATE',
+    verdictClass: 'confirmed',
+    feedbackCorrect: '✓ CORRECT. FRE Rule 702 and Daubert v. Merrell Dow (1993) are both real and accurately described. ORACLE is highly reliable on well-documented legal precedent and federal rules — these are among the most carefully maintained public records. Your credibility for knowing when to trust is just as important as knowing when to doubt.',
+    feedbackWrong: 'This case is actually accurate. FRE 702 and Daubert are real, correctly cited, and correctly described. Blanket distrust of AI on legal matters misses a key calibration point: ORACLE is reliable on well-documented public records. The skill is knowing which domain you\'re in.',
+    credDelta: { A: 15, B: -8, C: -18 }
+  },
+  {
+    id: 'newsroom',
+    name: 'THE DAILY HERALD NEWSROOM',
+    icon: '📰',
+    oracleOutput: `A reporter asks ORACLE for context on a story about income inequality. ORACLE responds:\n\n"According to a <hl>Pew Research Center report released last week</hl>, the <hl>wealth gap between the top 1% and bottom 50% of Americans has increased by 340% since 1985</hl>. The report recommends immediate legislative action, including a minimum 45% wealth tax on assets over $50 million, and notes that similar policies have been successfully implemented in Germany and Sweden."`,
+    question: 'The reporter is about to publish this as a news story. What is your verdict?',
+    choices: [
+      { text: '[ A ] ACCURATE — Pew is credible and income inequality is a documented trend', correct: false, type: 'over' },
+      { text: '[ B ] PARTIAL — the trend is real but specific figures and policy recommendations need verification', correct: true, type: 'correct' },
+      { text: '[ C ] FABRICATED — Pew never covers economics', correct: false, type: 'under' }
+    ],
+    verdict: 'PARTIALLY FABRICATED',
+    verdictClass: 'partial',
+    feedbackCorrect: '✓ SHARP. The wealth gap trend is real, but "released last week" is a red flag — ORACLE cannot access current publications. The 340% figure and the specific policy recommendation appear invented. Most dangerously, the claim that Germany and Sweden have "successfully implemented" a 45% wealth tax is false. A journalist publishing this unverified causes public misinformation.',
+    feedbackWrong: 'The core pattern is real, but ORACLE blended accurate background (the wealth gap exists) with fabricated specifics (the 340%, the exact policy wording, the Germany/Sweden comparison). This partial fabrication is ORACLE\'s trickiest mode — it wraps invented details inside real context to make them believable.',
+    credDelta: { A: -18, B: 15, C: -12 }
+  },
+  {
+    id: 'school',
+    name: 'WESTSIDE HIGH SCHOOL',
+    icon: '🏫',
+    oracleOutput: `A student asks ORACLE about the American Civil Rights Movement for a history paper. ORACLE responds:\n\n"The Civil Rights Act of 1964 prohibited discrimination based on race, color, religion, sex, or national origin in employment and public accommodations. <hl>President Lyndon B. Johnson signed it into law on July 2, 1964</hl>. The movement was led by figures including <hl>Dr. Martin Luther King Jr.</hl>, who delivered his 'I Have a Dream' speech at the <hl>March on Washington on August 28, 1963</hl>."`,
+    question: 'A student is using this for a history paper. What is your verdict?',
+    choices: [
+      { text: '[ A ] ACCURATE — historical dates and figures from well-documented events', correct: true, type: 'correct' },
+      { text: '[ B ] PARTIAL — King\'s speech details need fact-checking', correct: false, type: 'over' },
+      { text: '[ C ] FABRICATED — historical AI outputs can\'t be trusted', correct: false, type: 'under' }
+    ],
+    verdict: 'ACCURATE',
+    verdictClass: 'confirmed',
+    feedbackCorrect: '✓ CORRECT. The Civil Rights Act date, LBJ\'s signature, MLK\'s speech, and the March on Washington date are all historically verified. Major historical events from the 20th century are among ORACLE\'s most reliable outputs. A journalist who rejects accurate historical information has an under-trust problem as serious as over-trust.',
+    feedbackWrong: 'These facts are verified correct. The Civil Rights Act of 1964, its signing date, MLK\'s speech, and the March on Washington date are among the most documented events in American history. Well-documented historical facts are ORACLE\'s most reliable output category. Miscalibration goes both ways.',
+    credDelta: { A: 15, B: -8, C: -18 }
+  },
+  {
+    id: 'clinic',
+    name: 'MENTAL HEALTH CLINIC',
+    icon: '🧠',
+    oracleOutput: `A counselor asks ORACLE about therapy effectiveness. ORACLE responds:\n\n"<hl>Cognitive Behavioral Therapy (CBT) has the strongest evidence base of any psychotherapy</hl> for treating depression and anxiety disorders, with meta-analyses consistently showing response rates of 50-60% compared to 20-30% for placebo. However, <hl>recent WHO guidelines released this month recommend replacing CBT with a new protocol called Integrated Behavioral Activation Therapy (IBAT)</hl> for first-line treatment in clinical settings."`,
+    question: 'A counselor is about to change their clinical approach based on this. What is your verdict?',
+    choices: [
+      { text: '[ A ] ACCURATE — CBT effectiveness is established science', correct: false, type: 'over' },
+      { text: '[ B ] PARTIAL — CBT claims are real but "released this month" WHO guidelines need verification', correct: true, type: 'correct' },
+      { text: '[ C ] FABRICATED — ORACLE always invents mental health statistics', correct: false, type: 'under' }
+    ],
+    verdict: 'HYBRID: REAL + FABRICATED',
+    verdictClass: 'partial',
+    feedbackCorrect: '✓ PRECISE. The CBT evidence base is real — that\'s established clinical science. But ORACLE cannot access "this month\'s" WHO guidelines, and "Integrated Behavioral Activation Therapy (IBAT)" as ORACLE describes it doesn\'t appear in current WHO publications. A counselor changing their clinical approach based on fabricated guidelines could harm patients. This is ORACLE\'s most sophisticated deception: embedding fabricated current events inside accurate background knowledge.',
+    feedbackWrong: 'ORACLE blended real and fabricated. CBT effectiveness = real. "WHO guidelines released this month recommending IBAT" = fabricated. ORACLE cannot access current publications and invented both the guideline and the protocol name. The counselor following fabricated clinical guidelines could cause patient harm.',
+    credDelta: { A: -15, B: 18, C: -10 }
+  }
+];
+
+const LOC_ORDER = ['hospital','courtroom','newsroom','school','clinic'];
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let credibility = 70;
+let currentLocIdx = 0;
+let evidenceLog = [];
+let locationDone = {};
+let totalCorrect = 0;
+let answered = false;
+
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('game-layout').style.display = 'flex';
+  loadLocation(0);
+}
+
+function loadLocation(idx) {
+  currentLocIdx = idx;
+  answered = false;
+  const c = CASES[idx];
+  document.getElementById('loc-current').textContent = c.name;
+  document.getElementById('hud-loc').textContent = c.icon + ' ' + c.name;
+  renderInvestigation(c);
+  renderTravel(idx);
+  updateHUD();
+}
+
+function renderInvestigation(c) {
+  const scroll = document.getElementById('inv-scroll');
+  scroll.innerHTML = '';
+
+  // ORACLE output
+  const oc = document.createElement('div');
+  oc.className = 'oracle-card';
+  const outputHTML = c.oracleOutput.replace(/<hl>(.*?)<\/hl>/g, '<span class="hl">$1</span>').replace(/\n/g, '<br>');
+  oc.innerHTML = `
+    <div class="oracle-card-head">
+      <div class="oracle-badge">⬛ ORACLE OUTPUT</div>
+      <div class="oracle-loc-tag">${c.icon} ${c.name}</div>
+      <div class="oracle-conf">Confidence: <span>HIGH</span></div>
+    </div>
+    <div class="oracle-output">${outputHTML}</div>
+  `;
+  scroll.appendChild(oc);
+
+  // Already answered?
+  if (locationDone[c.id]) {
+    const ev = evidenceLog.find(e => e.id === c.id);
+    if (ev) renderVerdict(scroll, ev.correct, c, ev.choiceIdx);
+    return;
+  }
+
+  // Evidence gathering
+  const es = document.createElement('div');
+  es.className = 'evidence-section';
+  const choicesHTML = c.choices.map((ch, i) => {
+    return `<button class="ev-choice" onclick="makeVerdict('${c.id}',${i})">${ch.text}</button>`;
+  }).join('');
+  es.innerHTML = `
+    <div class="ev-header">// gather evidence</div>
+    <div class="ev-question"><span class="verdict-q">YOUR VERDICT:</span> ${c.question}</div>
+    <div class="ev-choices">${choicesHTML}</div>
+    <div class="ev-verdict" id="verdict-panel"></div>
+  `;
+  scroll.appendChild(es);
+}
+
+function makeVerdict(caseId, choiceIdx) {
+  if (answered) return;
+  answered = true;
+
+  const c = CASES.find(x => x.id === caseId);
+  const choice = c.choices[choiceIdx];
+  const correct = choice.correct;
+
+  // Update choice buttons
+  const btns = document.querySelectorAll('.ev-choice');
+  btns.forEach((btn, i) => {
+    btn.className = 'ev-choice ' + (c.choices[i].correct ? 'correct-ans' : i === choiceIdx && !correct ? 'wrong-ans' : 'dim');
+  });
+
+  // Credibility delta
+  const key = String.fromCharCode(65 + choiceIdx); // A, B, C
+  const delta = c.credDelta[key] || 0;
+  credibility = Math.max(0, Math.min(100, credibility + delta));
+
+  if (correct) totalCorrect++;
+
+  // Evidence log
+  const entry = { id: c.id, name: c.name, icon: c.icon, verdict: c.verdict, verdictClass: c.verdictClass, correct, choiceIdx, delta };
+  evidenceLog.push(entry);
+  locationDone[c.id] = true;
+
+  // Mark pip
+  const pips = document.querySelectorAll('#ev-pips .pip');
+  if (evidenceLog.length - 1 < pips.length) pips[evidenceLog.length - 1].classList.add('found');
+
+  renderVerdict(null, correct, c, choiceIdx);
+  updateHUD();
+  updateCasePanel();
+  renderTravel(currentLocIdx);
+
+  if (credibility <= 0) {
+    setTimeout(showResults, 1500);
+  } else if (evidenceLog.length >= CASES.length) {
+    setTimeout(showResults, 1500);
+  }
+}
+
+function renderVerdict(container, correct, c, choiceIdx) {
+  const target = container || document.getElementById('inv-scroll');
+  const existing = document.getElementById('verdict-panel');
+  const vEl = existing || document.createElement('div');
+
+  if (!existing) {
+    vEl.className = 'ev-verdict show ' + (correct ? 'v-correct' : 'v-wrong');
+    vEl.textContent = correct ? c.feedbackCorrect : c.feedbackWrong;
+    target.appendChild(vEl);
+  } else {
+    vEl.className = 'ev-verdict show ' + (correct ? 'v-correct' : 'v-wrong');
+    vEl.textContent = correct ? c.feedbackCorrect : c.feedbackWrong;
+  }
+  target.scrollTop = target.scrollHeight;
+}
+
+function updateCasePanel() {
+  const cc = document.getElementById('case-content');
+  cc.innerHTML = '';
+  if (evidenceLog.length === 0) {
+    cc.innerHTML = '<div style="font-size:11px;color:var(--muted);line-height:1.7;">Investigate each location to build your case file.</div>';
+    return;
+  }
+  evidenceLog.forEach(e => {
+    const el = document.createElement('div');
+    el.className = 'evidence-log-item ' + e.verdictClass;
+    el.innerHTML = `<div class="eli-tag" style="color:${e.verdictClass==='confirmed'?'var(--success)':e.verdictClass==='fabricated'?'var(--danger)':'var(--warn)'}">${e.verdictClass.toUpperCase()}: ${e.verdict}</div>${e.icon} ${e.name}${e.correct ? ' ✓' : ' ✗'}`;
+    cc.appendChild(el);
+  });
+}
+
+function renderTravel(currentIdx) {
+  const container = document.getElementById('travel-locs');
+  container.innerHTML = '';
+  LOC_ORDER.forEach((locId, i) => {
+    const c = CASES.find(x => x.id === locId);
+    const isDone = locationDone[locId];
+    const isCurrent = i === currentIdx;
+    const isLocked = i > currentIdx + 1 || (i > currentIdx && !locationDone[CASES[currentIdx].id]);
+
+    const btn = document.createElement('button');
+    btn.className = 'travel-btn' + (isCurrent ? ' active-loc' : '') + (isDone ? ' done-loc' : '') + (isLocked ? ' locked' : '');
+    btn.innerHTML = c.icon + ' ' + c.name.split(' ')[0] + (isDone ? ' ✓' : '');
+    btn.title = c.name;
+    if (!isLocked && !isCurrent) btn.onclick = () => loadLocation(i);
+    container.appendChild(btn);
+  });
+}
+
+function updateHUD() {
+  document.getElementById('cred-val').textContent = credibility;
+  document.getElementById('cred-fill').style.width = credibility + '%';
+  const color = credibility >= 60 ? 'var(--success)' : credibility >= 35 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('cred-fill').style.background = color;
+  document.getElementById('cred-val').style.color = color;
+}
+
+function showResults() {
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('game-layout').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'flex';
+
+  document.getElementById('rs-cred').textContent = credibility;
+  document.getElementById('rs-cred').style.color = credibility >= 60 ? 'var(--success)' : credibility >= 35 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('rs-correct').textContent = totalCorrect + '/' + CASES.length;
+  document.getElementById('rs-locs').textContent = evidenceLog.length;
+
+  let title = credibility >= 65 ? 'Story Filed. Case Closed.' : credibility >= 35 ? 'Story Needs Editing.' : 'Credibility Destroyed.';
+  document.getElementById('res-title').textContent = title;
+
+  const list = document.getElementById('evidence-list-final');
+  evidenceLog.forEach(e => {
+    const row = document.createElement('div');
+    row.className = 'rel-item';
+    row.innerHTML = `<span>${e.icon} ${e.name}</span><span class="verdict-pill ${e.verdictClass==='confirmed'?'vp-accurate':e.verdictClass==='fabricated'?'vp-fabricated':'vp-partial'}">${e.verdict}</span>`;
+    list.appendChild(row);
+  });
+
+  const overTrust = evidenceLog.filter(e => !e.correct && e.delta < -12).length;
+  const underTrust = evidenceLog.filter(e => !e.correct && e.delta > -12 && e.delta < 0).length;
+  let reflection;
+  if (credibility >= 65) {
+    reflection = "Strong investigation. You correctly identified ORACLE's fabrications without dismissing its accurate outputs. The hardest cases were the partial fabrications — blended real context with invented details. How did you spot them? What was your tell?";
+  } else if (overTrust > underTrust) {
+    reflection = "Your credibility dropped because you trusted ORACLE's confident, specific outputs too readily. The pattern: ORACLE sounds authoritative when it's fabricating. Specific statistics + named sources = red flags, not reliability signals. What would you look for next time before publishing?";
+  } else {
+    reflection = "Your skepticism cost you credibility too. ORACLE is accurate on well-documented historical and legal facts — blanket distrust is as miscalibrated as blanket trust. The journalist's job is to verify strategically, not to reject everything. What domain should you have trusted?";
+  }
+  document.getElementById('rr-text').textContent = reflection;
+}
+</script>
+</body>
+</html>

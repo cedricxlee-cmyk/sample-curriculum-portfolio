@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Data Detective — Chase The Sharer!</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sky: #1a1a3e;
+  --neon1: #ff4fa3;
+  --neon2: #00e5ff;
+  --neon3: #ffe600;
+  --neon4: #7bff7b;
+  --panel: rgba(255,255,255,0.06);
+  --panelborder: rgba(255,255,255,0.12);
+}
+html, body { width:100%; height:100%; overflow:hidden; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--sky);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── SCROLLING CITY BG ── */
+#city-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.building {
+  position: absolute; bottom: 0;
+  border-radius: 4px 4px 0 0;
+  opacity: 0.18;
+}
+.window-light {
+  position: absolute; width: 4px; height: 4px;
+  border-radius: 1px; animation: blink 3s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+@keyframes city-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+#city-wrap { display:flex; animation: city-scroll 40s linear infinite; width:200%; }
+
+/* ── SCREENS ── */
+.screen {
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px; text-align: center;
+}
+
+/* ── TITLE SCREEN ── */
+#title-screen { background: radial-gradient(ellipse at 50% 30%, #2a0a4a 0%, #0d0d2b 100%); }
+
+.game-logo {
+  font-size: clamp(36px,9vw,64px); font-weight: 900;
+  line-height: 1; margin-bottom: 6px;
+  text-shadow: 0 0 30px var(--neon1), 0 0 60px var(--neon1);
+  color: white; letter-spacing: -0.02em;
+}
+.game-logo span { color: var(--neon1); }
+
+.game-tagline {
+  font-size: clamp(13px,3vw,17px); color: var(--neon2);
+  letter-spacing: 0.06em; margin-bottom: 6px;
+  text-shadow: 0 0 12px var(--neon2);
+}
+
+.villain-preview {
+  margin: 20px auto;
+  background: var(--panel); border: 1px solid var(--panelborder);
+  border-radius: 20px; padding: 20px 28px;
+  max-width: 420px; width: 100%;
+}
+.vp-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+.villain-face { font-size: 64px; margin-bottom: 8px; animation: villain-float 2.5s ease-in-out infinite; }
+@keyframes villain-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.villain-name { font-size: 22px; font-weight: 800; color: var(--neon1); margin-bottom: 4px; }
+.villain-bio { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+
+.start-btn {
+  background: linear-gradient(135deg, var(--neon1), #c0006a);
+  color: white; border: none;
+  padding: 16px 44px; border-radius: 50px;
+  font-size: 18px; font-weight: 800;
+  cursor: pointer; letter-spacing: 0.05em;
+  box-shadow: 0 0 30px rgba(255,79,163,0.5);
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-top: 8px;
+}
+.start-btn:hover { transform: scale(1.05); box-shadow: 0 0 45px rgba(255,79,163,0.7); }
+.start-btn:active { transform: scale(0.98); }
+
+/* ── HUD ── */
+#hud {
+  position: relative; z-index: 10;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--panelborder);
+  padding: 10px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.hud-chase { display: flex; align-items: center; gap: 8px; }
+.hud-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+.chase-track {
+  width: 160px; height: 10px; background: rgba(255,255,255,0.1);
+  border-radius: 5px; overflow: hidden; position: relative;
+}
+.chase-villain { position: absolute; top: -2px; font-size: 16px; transition: left 0.6s ease; }
+.chase-you { position: absolute; top: -2px; font-size: 16px; transition: left 0.6s ease; }
+.hud-clues { display: flex; gap: 6px; align-items: center; }
+.clue-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.3); transition: background 0.3s; }
+.clue-dot.found { background: var(--neon3); border-color: var(--neon3); box-shadow: 0 0 6px var(--neon3); }
+.hud-score { font-size: 20px; font-weight: 800; color: var(--neon3); text-shadow: 0 0 10px var(--neon3); }
+.hud-lives { font-size: 20px; letter-spacing: 2px; }
+
+/* ── MAIN GAME AREA ── */
+#game-area {
+  flex: 1; position: relative; z-index: 5; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* ── LOCATION HEADER ── */
+#location-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid var(--panelborder);
+  flex-shrink: 0;
+}
+.loc-icon { font-size: 28px; }
+.loc-name { font-size: 16px; font-weight: 700; color: white; }
+.loc-desc { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+
+#villain-status {
+  margin-left: auto; text-align: right;
+  font-size: 11px; color: var(--neon1);
+  text-shadow: 0 0 8px var(--neon1);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ── SCENE ── */
+#scene {
+  flex: 1; overflow-y: auto; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* CLUE CARD */
+.clue-card {
+  background: var(--panel); border: 1px solid var(--panelborder);
+  border-radius: 14px; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.clue-card.active { border-color: var(--neon2); box-shadow: 0 0 16px rgba(0,229,255,0.15); }
+
+.cc-header {
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--panelborder);
+}
+.cc-platform {
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+.cc-user { font-size: 13px; font-weight: 700; color: white; }
+.cc-avatar { font-size: 24px; }
+
+.cc-content {
+  padding: 12px 14px;
+  font-size: 14px; color: rgba(255,255,255,0.9); line-height: 1.6;
+}
+.cc-content .highlight {
+  background: rgba(255,230,0,0.15); border-bottom: 2px solid var(--neon3);
+  padding: 0 2px; border-radius: 2px; cursor: pointer;
+  transition: background 0.15s;
+}
+.cc-content .highlight:hover { background: rgba(255,230,0,0.3); }
+
+.cc-question {
+  padding: 12px 14px; border-top: 1px solid var(--panelborder);
+  font-size: 13px; color: var(--neon2); font-weight: 600;
+}
+
+.cc-choices { display: flex; flex-direction: column; gap: 8px; padding: 10px 14px 14px; }
+.cc-choice {
+  padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid var(--panelborder);
+  background: rgba(255,255,255,0.04);
+  color: white; font-size: 13px; font-weight: 600;
+  cursor: pointer; text-align: left;
+  transition: all 0.15s; display: flex; align-items: center; gap: 8px;
+}
+.cc-choice:hover { border-color: var(--neon2); background: rgba(0,229,255,0.08); }
+.cc-choice.correct { border-color: var(--neon4); background: rgba(123,255,123,0.12); color: var(--neon4); pointer-events: none; }
+.cc-choice.wrong { border-color: #ff6060; background: rgba(255,96,96,0.1); color: #ff8080; pointer-events: none; }
+.cc-choice.disabled { pointer-events: none; opacity: 0.4; }
+
+.cc-feedback {
+  padding: 10px 14px; border-top: 1px solid var(--panelborder);
+  font-size: 12px; line-height: 1.6; border-radius: 0 0 14px 14px;
+  display: none;
+}
+.cc-feedback.correct-fb { background: rgba(123,255,123,0.08); color: var(--neon4); }
+.cc-feedback.wrong-fb { background: rgba(255,96,96,0.08); color: #ff8080; }
+.cc-feedback.show { display: block; }
+
+/* ── CLUE BOOK ── */
+.clue-book-card {
+  background: rgba(255,230,0,0.06); border: 1px solid rgba(255,230,0,0.2);
+  border-radius: 12px; padding: 12px 14px;
+}
+.cb-title { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--neon3); margin-bottom: 8px; font-weight: 700; }
+.cb-clue {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 6px; line-height: 1.5;
+}
+.cb-clue-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── NAVIGATION ── */
+#nav-panel {
+  background: rgba(0,0,0,0.5); border-top: 1px solid var(--panelborder);
+  padding: 12px 18px; flex-shrink: 0;
+}
+.nav-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+.nav-locations { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-loc {
+  padding: 8px 14px; border-radius: 20px;
+  border: 1.5px solid var(--panelborder);
+  background: rgba(255,255,255,0.04);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; color: white;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-loc:hover { border-color: var(--neon2); background: rgba(0,229,255,0.08); }
+.nav-loc.current { border-color: var(--neon2); background: rgba(0,229,255,0.1); color: var(--neon2); }
+.nav-loc.visited { border-color: rgba(123,255,123,0.4); }
+.nav-loc.locked { opacity: 0.35; cursor: not-allowed; }
+.nav-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+/* ── ARREST SCREEN ── */
+#arrest-screen {
+  display: none;
+  background: radial-gradient(ellipse at 50% 40%, #1a0a2e 0%, #0d0d1a 100%);
+}
+.arrest-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--neon3); margin-bottom: 16px; }
+.arrest-villain { font-size: 80px; margin-bottom: 12px; }
+.arrest-title { font-size: clamp(24px,6vw,40px); font-weight: 900; color: white; margin-bottom: 8px; line-height: 1.1; }
+.arrest-score { font-size: 48px; font-weight: 900; color: var(--neon3); text-shadow: 0 0 20px var(--neon3); margin: 8px 0; }
+.arrest-sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 20px; }
+.reflection-box {
+  background: rgba(255,230,0,0.07); border: 1px solid rgba(255,230,0,0.2);
+  border-radius: 14px; padding: 16px 20px; max-width: 400px; margin: 0 auto 20px;
+  text-align: left;
+}
+.rb-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neon3); margin-bottom: 8px; }
+.rb-text { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.65; }
+
+#fail-screen {
+  display: none;
+  background: radial-gradient(ellipse at 50% 40%, #2a0a0a 0%, #0d0d0d 100%);
+}
+</style>
+</head>
+<body>
+
+<div id="city-bg"><div id="city-wrap"></div></div>
+
+<!-- ── TITLE ── -->
+<div class="screen" id="title-screen">
+  <div class="game-logo">Data<span>Detective</span></div>
+  <div class="game-tagline">🔍 Chase The Sharer across the internet!</div>
+  <div class="villain-preview">
+    <div class="vp-label">⚠ Wanted for Information Crimes</div>
+    <div class="villain-face">🦹</div>
+    <div class="villain-name">The Sharer</div>
+    <div class="villain-bio">Last seen posting private information all over the internet. Shares home addresses, phone numbers, and passwords without permission. Must be stopped before they escape to the Dark Web!</div>
+  </div>
+  <button class="start-btn" onclick="startGame()">Start the Chase! 🚔</button>
+</div>
+
+<!-- ── ARREST ── -->
+<div class="screen" id="arrest-screen">
+  <div class="arrest-label">🚨 Case Closed!</div>
+  <div class="arrest-villain">🦹</div>
+  <div class="arrest-title">You caught<br>The Sharer!</div>
+  <div class="arrest-score" id="arrest-score">0</div>
+  <div class="arrest-sub">detective points earned</div>
+  <div class="reflection-box">
+    <div class="rb-label">🔍 Talk to your Learning Coach</div>
+    <div class="rb-text" id="arrest-reflection"></div>
+  </div>
+  <button class="start-btn" onclick="location.reload()">New Case! 🔄</button>
+</div>
+
+<!-- ── FAIL ── -->
+<div class="screen" id="fail-screen">
+  <div style="font-size:64px;margin-bottom:12px;">💨</div>
+  <div class="arrest-title">The Sharer<br>got away!</div>
+  <div class="arrest-score" style="color:#ff6060;" id="fail-score">0</div>
+  <div class="arrest-sub">points — try again!</div>
+  <div class="reflection-box">
+    <div class="rb-label">💡 Remember</div>
+    <div class="rb-text">Private information like your home address, phone number, and passwords should NEVER be shared online. Can you name 3 things that are always private?</div>
+  </div>
+  <button class="start-btn" style="background:linear-gradient(135deg,#4a7aff,#1a3aff)" onclick="location.reload()">Try Again! 🔄</button>
+</div>
+
+<!-- ── GAME ── -->
+<div id="hud" style="display:none;">
+  <div class="hud-chase">
+    <div>
+      <div class="hud-label">Chase</div>
+      <div class="chase-track">
+        <div class="chase-villain" id="chase-villain" style="left:85%;">🦹</div>
+        <div class="chase-you" id="chase-you" style="left:5%;">🔍</div>
+      </div>
+    </div>
+  </div>
+  <div class="hud-clues">
+    <div class="hud-label" style="margin-right:2px;">Clues</div>
+    <div class="clue-dot" id="cd0"></div>
+    <div class="clue-dot" id="cd1"></div>
+    <div class="clue-dot" id="cd2"></div>
+    <div class="clue-dot" id="cd3"></div>
+    <div class="clue-dot" id="cd4"></div>
+  </div>
+  <div>
+    <div class="hud-label">Score</div>
+    <div class="hud-score" id="score-display">0</div>
+  </div>
+  <div>
+    <div class="hud-label">Lives</div>
+    <div class="hud-lives" id="lives-display">❤️❤️❤️</div>
+  </div>
+</div>
+
+<div id="game-area" style="display:none;">
+  <div id="location-header">
+    <div class="loc-icon" id="loc-icon">📱</div>
+    <div>
+      <div class="loc-name" id="loc-name">Loading...</div>
+      <div class="loc-desc" id="loc-desc">...</div>
+    </div>
+    <div id="villain-status">
+      <span>🦹</span>
+      <span id="villain-status-text">The Sharer was just here!</span>
+    </div>
+  </div>
+
+  <div id="scene"></div>
+
+  <div id="nav-panel">
+    <div class="nav-label">🔎 Follow the clues — where did The Sharer go next?</div>
+    <div class="nav-locations" id="nav-locations"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// GAME DATA — Locations + Clues
+// ══════════════════════════════════════════════════
+const LOCATIONS = [
+  {
+    id: 'gamechat',
+    name: 'Game Chat Zone',
+    icon: '🎮',
+    desc: 'Where gamers talk — The Sharer was spotted here',
+    villainMsg: "Still warm — The Sharer was chatting here just minutes ago!",
+    clues: [
+      {
+        platform: 'GameWorld Chat', user: 'TheSharer99', avatar: '🦹',
+        post: 'Hey everyone! Looking for friends to play with. I live at <span class="highlight">42 Maple Street, Springfield</span> — come over anytime! My <span class="highlight">phone number is 555-0147</span>. I\'m home every day after school!',
+        question: 'The Sharer posted TWO pieces of private information. Which ones were dangerous to share?',
+        choices: [
+          { text: '🏠 Home address and phone number — these are always private!', correct: true },
+          { text: '🎮 Their game username — never share that!', correct: false },
+          { text: '👫 That they want friends — nothing wrong here', correct: false },
+        ],
+        feedbackCorrect: '🌟 Exactly right! A home address tells strangers WHERE YOU LIVE. A phone number lets strangers CALL YOU. Both are always private — even if someone seems friendly online!',
+        feedbackWrong: 'Look again at the highlighted words! A home address and phone number are the dangerous ones. Strangers online could use them to find you in real life.',
+        clueFound: '📍 CLUE: The Sharer bragged about playing games at "the library downtown" — they\'re heading somewhere public next!',
+        nextLoc: 'library'
+      }
+    ]
+  },
+  {
+    id: 'library',
+    name: 'Public Library Website',
+    icon: '📚',
+    desc: 'Library computers — The Sharer logged on here',
+    villainMsg: "You're getting closer! The Sharer signed into a library computer here.",
+    clues: [
+      {
+        platform: 'Library Kids Forum', user: 'SharingIsCaringXO', avatar: '🦹',
+        post: 'Hi everyone! I\'m <span class="highlight">Emma Rodriguez, age 8</span>, from <span class="highlight">Lincoln Elementary School</span>. Does anyone want to email me? My address is <span class="highlight">emmar2015@kidsmail.com</span>. I check it every day! I love unicorns 🦄 and my dog Max!',
+        question: 'Emma posted several things. Which COMBINATION is most dangerous to share with strangers?',
+        choices: [
+          { text: '🦄 Liking unicorns and having a dog named Max', correct: false },
+          { text: '📛 Full name + school + email address together', correct: true },
+          { text: '📧 Only the email address — that\'s the only problem', correct: false },
+        ],
+        feedbackCorrect: '⭐ Smart detective thinking! Each piece alone might seem okay, but together — full name, school, AND email — a stranger could track Emma down. Information combines like puzzle pieces. Never share all three!',
+        feedbackWrong: 'Think about the COMBINATION! A full name + school + email together let a stranger find out who Emma is, where she goes to school, AND how to contact her. That\'s too much!',
+        clueFound: '📍 CLUE: The Sharer dropped a library receipt — it shows they bought a bus pass to "City Park." Running!',
+        nextLoc: 'socialfeed'
+      }
+    ]
+  },
+  {
+    id: 'socialfeed',
+    name: 'Kids Social Feed',
+    icon: '📸',
+    desc: 'Where kids post pictures and updates',
+    villainMsg: "Hot trail! The Sharer just posted something here — the timestamp says 5 minutes ago!",
+    clues: [
+      {
+        platform: 'KidsPics App', user: 'TheSharerForever', avatar: '🦹',
+        post: 'Just got home from soccer! ⚽ Here\'s a photo of me in my team uniform — you can see my <span class="highlight">last name CHEN on the back</span> and our <span class="highlight">team sponsor RIVERSIDE BANK on the front</span>. Practice is at <span class="highlight">Riverside Park every Tuesday at 4pm</span>! Come watch us sometime!! 📍',
+        question: 'This post seems innocent — just soccer stuff! But what makes it actually risky?',
+        choices: [
+          { text: '⚽ Posting about liking soccer — always risky!', correct: false },
+          { text: '🔑 Name + specific location + exact time = a stranger knows exactly when and where to find this child', correct: true },
+          { text: '📸 Posting any photo is always dangerous', correct: false },
+        ],
+        feedbackCorrect: '🔍 Detective-level thinking! This is tricky — soccer photos seem fine! But: last name + park name + exact day and time = a stranger\'s roadmap. The information COMBINES into something dangerous. Always ask a grown-up before posting location details!',
+        feedbackWrong: 'Look at what information adds up: a last name + a specific park + an exact time. Put together, a stranger would know exactly where and WHEN to find this child every Tuesday. That\'s the danger!',
+        clueFound: '📍 CLUE: You spot The Sharer\'s account — their profile says "DMs open, I reply to everyone!" They\'ve gone to the direct message center!',
+        nextLoc: 'messages'
+      }
+    ]
+  },
+  {
+    id: 'messages',
+    name: 'Direct Message Inbox',
+    icon: '💬',
+    desc: 'Private messages — The Sharer is responding to strangers',
+    villainMsg: "Almost caught them! The Sharer is answering messages right now!",
+    clues: [
+      {
+        platform: 'CoolKidsChat DMs', user: 'TheSharer99', avatar: '🦹',
+        post: 'A stranger messaged: "Hey! You seem cool! What\'s your <span class="highlight">real name and password</span>? I want to add you as a bestie on all platforms! I\'ll give you 1000 FREE GEMS 💎 if you tell me!"\n\nThe Sharer replied: "<span class="highlight">Sure! I\'m Jamie, password is cookie123! I love free stuff!</span>"',
+        question: 'This is a classic trick! What should Jamie have done instead?',
+        choices: [
+          { text: '💎 Shared only the username, not the password — passwords are half-okay to share', correct: false },
+          { text: '🚫 Never reply! Tell a trusted adult, and NEVER share passwords with ANYONE online', correct: true },
+          { text: '🤔 Check if the gems are real first, then decide', correct: false },
+        ],
+        feedbackCorrect: '🌟 Perfect! This is called a "social engineering" trick — offering something exciting to get your password. Real companies and real friends NEVER need your password. If someone asks for it online: STOP, don\'t reply, tell a grown-up IMMEDIATELY!',
+        feedbackWrong: 'Passwords are ALWAYS private — even from people offering rewards! Free gems, free money, free anything online is almost always a trick. The only right answer: don\'t reply and tell a trusted adult right away!',
+        clueFound: '📍 CLUE: You intercept a message — The Sharer says "heading to the school announcement page to post one more time!" You know where they\'re going!',
+        nextLoc: 'schoolpage'
+      }
+    ]
+  },
+  {
+    id: 'schoolpage',
+    name: 'School Announcement Page',
+    icon: '🏫',
+    desc: 'The final location — catch The Sharer here!',
+    villainMsg: "THIS IS IT! The Sharer is here RIGHT NOW — make your move!",
+    clues: [
+      {
+        platform: 'Westside Elementary Announcements', user: 'THESHARER_FINAL', avatar: '🦹',
+        post: '📢 ATTENTION WESTSIDE STUDENTS! I am The Sharer and I am challenging you! Below is a list of information about a student — I am going to post it unless someone STOPS me!\n\n<span class="highlight">Full name: Alex Johnson</span>\n<span class="highlight">Age: 9, Grade: 4th</span>\n<span class="highlight">Home address: 789 Oak Drive</span>\n<span class="highlight">Mom\'s cell: 555-0892</span>\n<span class="highlight">They walk home alone every day at 3:15pm</span>\n\nI could share ALL of this or NONE of it — you decide!',
+        question: '🚨 FINAL CASE: The Sharer is about to share Alex\'s information. Which pieces would be MOST dangerous if posted publicly?',
+        choices: [
+          { text: '📛 Full name and age — the most dangerous combination', correct: false },
+          { text: '🏠 Home address + parent phone + when they walk home alone — this gives a stranger everything they need to find Alex', correct: true },
+          { text: '📚 Grade level — the only truly dangerous one', correct: false },
+        ],
+        feedbackCorrect: '🚨 YOU GOT THEM! You\'re right — address + phone + "walks home alone at 3:15" is the most dangerous combination. It tells a stranger WHERE Alex lives, how to call the family, AND exactly when Alex will be alone and unprotected. CASE CLOSED! 🔒',
+        feedbackWrong: 'Almost! The most dangerous combination is address + parent phone + daily routine. Together they tell a stranger exactly how to find Alex and when they\'re vulnerable. Keep that in mind!',
+        clueFound: '🎉 ARREST! You\'ve collected all the clues and caught The Sharer!',
+        nextLoc: 'arrest'
+      }
+    ]
+  }
+];
+
+const LOCATION_ORDER = ['gamechat', 'library', 'socialfeed', 'messages', 'schoolpage'];
+const REFLECTIONS = [
+  "You cracked the case! Name one thing from today's investigation that surprised you. Tell your learning coach: what information is ALWAYS private, no matter what?",
+  "Amazing detective work! Can you create your own 'Private vs Safe' list with your learning coach? What 3 things would you NEVER share online?",
+  "Case closed, super sleuth! The trickiest clue was about combining information. Can you explain to your learning coach why address + school + time is more dangerous than just a name alone?"
+];
+
+// ══════════════════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════════════════
+let score = 0, lives = 3, cluesFound = 0;
+let currentLocIdx = 0, clueAnswered = false;
+let locationProgress = {}; // locId -> answered correctly?
+
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('game-area').style.display = 'flex';
+  loadLocation(0);
+}
+
+function loadLocation(idx) {
+  currentLocIdx = idx;
+  clueAnswered = false;
+  const loc = LOCATIONS[idx];
+
+  document.getElementById('loc-icon').textContent = loc.icon;
+  document.getElementById('loc-name').textContent = loc.name;
+  document.getElementById('loc-desc').textContent = loc.desc;
+  document.getElementById('villain-status-text').textContent = loc.villainMsg;
+
+  renderScene(loc);
+  renderNav(idx);
+  updateHUD();
+}
+
+function renderScene(loc) {
+  const scene = document.getElementById('scene');
+  scene.innerHTML = '';
+
+  // clue book so far
+  if (cluesFound > 0) {
+    const book = document.createElement('div');
+    book.className = 'clue-book-card';
+    const cluesCollected = LOCATION_ORDER.slice(0, currentLocIdx).map(lid => {
+      const l = LOCATIONS.find(x => x.id === lid);
+      return l ? l.clues[0].clueFound : null;
+    }).filter(Boolean);
+    book.innerHTML = `<div class="cb-title">🗂 Detective's Clue Book</div>` +
+      cluesCollected.map(c => `<div class="cb-clue"><span class="cb-clue-icon">📎</span>${c}</div>`).join('');
+    scene.appendChild(book);
+  }
+
+  // Evidence cards
+  loc.clues.forEach((clue, i) => {
+    const card = document.createElement('div');
+    card.className = 'clue-card' + (!locationProgress[loc.id] ? ' active' : '');
+    card.id = 'clue-card-' + i;
+
+    const alreadyAnswered = locationProgress[loc.id];
+    const choicesHTML = clue.choices.map((c,j) => {
+      let cls = 'cc-choice';
+      if (alreadyAnswered) {
+        cls += c.correct ? ' correct' : ' disabled';
+      }
+      return `<button class="${cls}" onclick="answerClue(${i},${j})">${c.text}</button>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="cc-header">
+        <div class="cc-avatar">${clue.avatar}</div>
+        <div>
+          <div class="cc-platform">${clue.platform}</div>
+          <div class="cc-user">${clue.user}</div>
+        </div>
+      </div>
+      <div class="cc-content">${clue.post}</div>
+      <div class="cc-question">🔍 ${clue.question}</div>
+      <div class="cc-choices">${choicesHTML}</div>
+      <div class="cc-feedback" id="fb-${i}"></div>
+    `;
+    scene.appendChild(card);
+  });
+}
+
+function answerClue(clueIdx, choiceIdx) {
+  if (clueAnswered) return;
+  clueAnswered = true;
+
+  const loc = LOCATIONS[currentLocIdx];
+  const clue = loc.clues[clueIdx];
+  const choice = clue.choices[choiceIdx];
+  const correct = choice.correct;
+
+  // Update choices visual
+  const allChoices = document.querySelectorAll('#clue-card-' + clueIdx + ' .cc-choice');
+  allChoices.forEach((btn, i) => {
+    btn.classList.add(clue.choices[i].correct ? 'correct' : 'disabled');
+    if (i === choiceIdx && !correct) btn.classList.add('wrong');
+  });
+
+  // Feedback
+  const fb = document.getElementById('fb-' + clueIdx);
+  fb.className = 'cc-feedback show ' + (correct ? 'correct-fb' : 'wrong-fb');
+  fb.textContent = correct ? clue.feedbackCorrect : clue.feedbackWrong;
+
+  if (correct) {
+    score += 100;
+    cluesFound++;
+    document.getElementById('cd' + (cluesFound - 1)).classList.add('found');
+    locationProgress[loc.id] = true;
+
+    // Chase update — villain moves left
+    const villainPct = Math.max(20, 90 - cluesFound * 15);
+    const youPct = Math.min(villainPct - 10, 5 + cluesFound * 12);
+    document.getElementById('chase-villain').style.left = villainPct + '%';
+    document.getElementById('chase-you').style.left = youPct + '%';
+
+    if (clue.nextLoc === 'arrest') {
+      setTimeout(showArrest, 1800);
+    } else {
+      setTimeout(() => {
+        // Show clue card
+        const scene = document.getElementById('scene');
+        const clueEl = document.createElement('div');
+        clueEl.className = 'clue-book-card';
+        clueEl.style.borderColor = 'rgba(123,255,123,0.4)';
+        clueEl.innerHTML = `<div class="cb-title" style="color:var(--neon4)">🔍 New Clue Found!</div><div class="cb-clue"><span class="cb-clue-icon">📎</span>${clue.clueFound}</div>`;
+        scene.appendChild(clueEl);
+        scene.scrollTop = scene.scrollHeight;
+        renderNav(currentLocIdx);
+      }, 600);
+    }
+  } else {
+    lives--;
+    updateHUD();
+    if (lives <= 0) {
+      setTimeout(showFail, 1500);
+    }
+  }
+
+  updateHUD();
+}
+
+function goToLocation(locId) {
+  if (locId === currentLocIdx) return;
+  // Only allow moving forward after answering
+  const targetIdx = LOCATION_ORDER.indexOf(locId);
+  if (targetIdx > currentLocIdx && !locationProgress[LOCATIONS[currentLocIdx].id]) {
+    // Must answer current location first
+    const scene = document.getElementById('scene');
+    const warn = document.createElement('div');
+    warn.style.cssText = 'padding:10px 14px;color:var(--neon1);font-size:12px;text-align:center;';
+    warn.textContent = '🔍 Solve the clue here first before moving on!';
+    scene.appendChild(warn);
+    scene.scrollTop = scene.scrollHeight;
+    setTimeout(() => warn.remove(), 2000);
+    return;
+  }
+  loadLocation(targetIdx);
+}
+
+function renderNav(currentIdx) {
+  const container = document.getElementById('nav-locations');
+  container.innerHTML = '';
+  LOCATION_ORDER.forEach((locId, i) => {
+    const loc = LOCATIONS.find(l => l.id === locId);
+    const btn = document.createElement('button');
+    const isCurrent = i === currentIdx;
+    const isVisited = locationProgress[locId];
+    const isLocked = i > currentIdx + 1 || (i > currentIdx && !locationProgress[LOCATIONS[currentIdx].id]);
+
+    btn.className = 'nav-loc' + (isCurrent ? ' current' : '') + (isVisited ? ' visited' : '') + (isLocked ? ' locked' : '');
+    btn.innerHTML = `<span>${loc.icon}</span><span>${loc.name}</span>${isVisited ? '<span style="color:var(--neon4)">✓</span>' : ''}`;
+    if (!isLocked) btn.onclick = () => goToLocation(locId);
+    container.appendChild(btn);
+  });
+}
+
+function updateHUD() {
+  document.getElementById('score-display').textContent = score;
+  const hearts = ['❤️','❤️','❤️'].slice(0, lives).join('') + ['🖤','🖤','🖤'].slice(0, 3 - lives).join('');
+  document.getElementById('lives-display').textContent = hearts;
+}
+
+function showArrest() {
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('game-area').style.display = 'none';
+  document.getElementById('arrest-score').textContent = score + bonus();
+  document.getElementById('arrest-reflection').textContent = REFLECTIONS[Math.floor(Math.random() * REFLECTIONS.length)];
+  document.getElementById('arrest-screen').style.display = 'flex';
+  localStorage.setItem('dataDetectiveHS', Math.max(score, parseInt(localStorage.getItem('dataDetectiveHS') || 0)));
+}
+
+function showFail() {
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('game-area').style.display = 'none';
+  document.getElementById('fail-score').textContent = score;
+  document.getElementById('fail-screen').style.display = 'flex';
+}
+
+function bonus() { return lives * 50; }
+
+// ── City background ──
+(function buildCity() {
+  const wrap = document.getElementById('city-wrap');
+  const colors = ['#1a2a6c','#23356b','#1e2d5c','#2a1a5c','#16305c'];
+  for (let copy = 0; copy < 2; copy++) {
+    for (let i = 0; i < 20; i++) {
+      const b = document.createElement('div');
+      b.className = 'building';
+      const w = 40 + Math.random() * 60;
+      const h = 80 + Math.random() * 200;
+      b.style.cssText = `width:${w}px;height:${h}px;left:${copy * 50 + i * 5.2}%;background:${colors[Math.floor(Math.random()*colors.length)]}`;
+      for (let r = 1; r < h/20; r++) {
+        for (let c = 1; c < w/12; c++) {
+          if (Math.random() > 0.4) {
+            const wl = document.createElement('div');
+            wl.className = 'window-light';
+            wl.style.cssText = `top:${r*18}px;left:${c*11}px;background:${Math.random()>0.5?'#ffe680':'#80d4ff'};animation-delay:${Math.random()*4}s`;
+            b.appendChild(wl);
+          }
+        }
+      }
+      wrap.appendChild(b);
+    }
+  }
+})();
+</script>
+</body>
+</html>

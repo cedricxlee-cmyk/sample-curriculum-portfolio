@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cedric Lee — Curriculum Portfolio </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f1f33;
+  --gold: #b8881e;
+  --gold-light: #d4a535;
+  --cream: #f8f4ee;
+  --warm: #fdfbf8;
+  --border: #e2ddd6;
+  --text: #1e1e1e;
+  --mid: #4a4a4a;
+  --light: #7a7a7a;
+  --teal: #1a6b72;
+  --rust: #a03a1f;
+  --forest: #2a5c3f;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--warm);
+  color: var(--text);
+  line-height: 1.7;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,136,30,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,107,114,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-top {
+  padding: 2rem 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  position: relative; z-index: 1;
+}
+.hero-label {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.hero-for {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 3.5rem;
+  position: relative; z-index: 1;
+  max-width: 820px;
+}
+.hero-eyebrow {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 32px; height: 1px;
+  background: var(--gold);
+}
+.hero-name {
+  font-family: 'Lora', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+.hero-name em { font-style: italic; color: rgba(255,255,255,0.45); }
+
+.hero-bio {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 560px;
+  margin-bottom: 2.5rem;
+}
+
+.credential-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.credential {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+}
+
+.hero-footer {
+  padding: 2rem 3.5rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative; z-index: 1;
+}
+.scroll-cue {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: pulse 2.5s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+@keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:.7} }
+
+/* ── SECTION WRAPPER ── */
+.section {
+  padding: 5rem 3.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.section + .section { padding-top: 0; }
+
+.section-rule {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 3.5rem;
+}
+
+/* ── SECTION HEADER ── */
+.section-eyebrow {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.section-eyebrow::before {
+  content: '';
+  display: block;
+  width: 20px; height: 2px;
+}
+.section-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+  line-height: 1.15;
+}
+.section-desc {
+  font-size: 1rem;
+  color: var(--mid);
+  max-width: 580px;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+}
+
+/* TEAL accent */
+.accent-teal .section-eyebrow { color: var(--teal); }
+.accent-teal .section-eyebrow::before { background: var(--teal); }
+/* RUST accent */
+.accent-rust .section-eyebrow { color: var(--rust); }
+.accent-rust .section-eyebrow::before { background: var(--rust); }
+/* FOREST accent */
+.accent-forest .section-eyebrow { color: var(--forest); }
+.accent-forest .section-eyebrow::before { background: var(--forest); }
+/* GOLD accent */
+.accent-gold .section-eyebrow { color: var(--gold); }
+.accent-gold .section-eyebrow::before { background: var(--gold); }
+
+/* ── UNIT CARDS ── */
+.unit-cards { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.unit-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.unit-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.uc-header {
+  display: grid;
+  grid-template-columns: 5px 1fr auto;
+  gap: 0;
+}
+.uc-stripe { width: 5px; }
+.uc-teal .uc-stripe { background: var(--teal); }
+.uc-rust .uc-stripe { background: var(--rust); }
+.uc-forest .uc-stripe { background: var(--forest); }
+
+.uc-meta {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.uc-tag {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.uc-teal .uc-tag { color: var(--teal); }
+.uc-rust .uc-tag { color: var(--rust); }
+.uc-forest .uc-tag { color: var(--forest); }
+
+.uc-title {
+  font-family: 'Lora', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+.uc-desc {
+  font-size: 0.87rem;
+  color: var(--mid);
+  line-height: 1.55;
+}
+
+.uc-arrow {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  color: var(--border);
+  transition: color 0.2s, transform 0.2s;
+}
+.unit-card:hover .uc-arrow { color: var(--gold); transform: translateX(3px); }
+
+.uc-chips {
+  padding: 0.75rem 1.5rem 0.9rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-left: 5px;
+}
+.chip {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--light);
+}
+.chip-game { background: rgba(13,27,42,0.04); }
+
+/* ── GAMES SECTION ── */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.game-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.game-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.gc-banner {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.gc-banner-teal { background: linear-gradient(135deg, #0d1b2a 0%, #1a6b72 100%); }
+.gc-banner-rust { background: linear-gradient(135deg, #0d1b2a 0%, #a03a1f 100%); }
+.gc-banner-forest { background: linear-gradient(135deg, #0d1b2a 0%, #2a5c3f 100%); }
+.gc-banner-purple { background: linear-gradient(135deg, #0d1b2a 0%, #5c3a9f 100%); }
+
+.gc-banner-emoji { font-size: 3rem; position: relative; z-index: 1; }
+.gc-banner-label {
+  position: absolute;
+  bottom: 8px; right: 10px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.gc-body { padding: 1rem 1.25rem 1.1rem; }
+.gc-grade {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--light);
+  margin-bottom: 0.3rem;
+}
+.gc-name {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+.gc-desc {
+  font-size: 0.82rem;
+  color: var(--mid);
+  line-height: 1.55;
+}
+
+.gc-footer {
+  padding: 0.65rem 1.25rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gc-play {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.gc-arrow { color: var(--light); transition: color 0.2s; }
+.game-card:hover .gc-arrow { color: var(--gold); }
+
+/* ── RESEARCH SECTION ── */
+.research-card {
+  background: var(--navy);
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+@media (max-width: 680px) {
+  .research-card { grid-template-columns: 1fr; }
+}
+
+.rc-left {
+  padding: 2.5rem;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+.rc-eyebrow {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.rc-title {
+  font-family: 'Lora', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.75rem;
+  line-height: 1.25;
+}
+.rc-desc {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+}
+.rc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gold);
+  color: var(--navy);
+  padding: 0.65rem 1.4rem;
+  border-radius: 4px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.rc-btn:hover { background: var(--gold-light); }
+
+.rc-right {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.rc-feature {
+  border-left: 2px solid rgba(255,255,255,0.1);
+  padding-left: 1rem;
+}
+.rcf-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 0.25rem;
+}
+.rcf-desc {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+}
+
+/* ── CONTEXT SECTION ── */
+.context-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+@media (max-width: 640px) { .context-grid { grid-template-columns: 1fr; } }
+
+.context-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+.cc-title {
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.cc-body {
+  font-size: 0.87rem;
+  color: var(--mid);
+  line-height: 1.65;
+}
+.cc-body li {
+  list-style: none;
+  padding-left: 1rem;
+  position: relative;
+  margin-bottom: 0.45rem;
+}
+.cc-body li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--light);
+  font-size: 0.75rem;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  background: var(--navy);
+  padding: 2.5rem 3.5rem;
+  margin-top: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.sf-name {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+.sf-role {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  margin-top: 0.15rem;
+}
+.sf-note {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .hero-top, .hero-body, .hero-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .section { padding: 3.5rem 1.5rem; }
+  .section-rule { margin: 0 1.5rem; }
+  .site-footer { padding: 2rem 1.5rem; }
+}
+
+/* ── FADE IN ── */
+.fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.08s; }
+.d2 { transition-delay: 0.16s; }
+.d3 { transition-delay: 0.24s; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-top">
+    <span class="hero-label">Curriculum Portfolio · 2025–26</span>
+    <span class="hero-for"></span>
+  </div>
+
+  <div class="hero-body">
+    <div class="hero-eyebrow">Curriculum Specialist Application</div>
+    <h1 class="hero-name">
+      Cedric<br><em>Lee</em>
+    </h1>
+    <p class="hero-bio">
+      Seven years in K–12 classrooms. Research in AI literacy and neurodivergent learners. Stanford d.school Fellow. Harvard Extension graduate coursework. This portfolio presents three curriculum units built specifically for the conditions of online and independent study — not adapted from a classroom, but native to online and independent study environments.
+    </p>
+    <div class="credential-row">
+      <span class="credential">CA Teaching Credential · Social Science</span>
+      <span class="credential">Harvard Extension · Learning Design & Technology</span>
+      <span class="credential">Stanford d.school · Lead Like It's 2040 Fellow</span>
+      <span class="credential">AI Literacy Research · UC Berkeley · Canterbury Christ Church</span>
+      <span class="credential">7 Years · Grades 1–12</span>
+    </div>
+  </div>
+
+  <div class="hero-footer">
+    <div style="font-family:'Source Code Pro',monospace;font-size:0.62rem;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">
+      cedricxlee-cmyk.github.io
+    </div>
+    <div class="scroll-cue">Scroll to explore ↓</div>
+  </div>
+</section>
+
+<!-- ── CURRICULUM UNITS ── -->
+<div class="section-rule"></div>
+<section class="section accent-teal">
+  <div class="section-eyebrow">The Work</div>
+  <h2 class="section-title">Three curriculum units.<br>Built for online learning.</h2>
+  <p class="section-desc">Each unit was designed around the specific conditions of online and independent study — asynchronous delivery, family learning coaches, distributed students, and non-traditional learning models. Not retrofitted from a classroom. Built here.</p>
+
+  <div class="unit-cards">
+
+    <a href="unit1.html" class="unit-card uc-teal fade-in">
+      <div class="uc-header">
+        <div class="uc-stripe"></div>
+        <div class="uc-meta">
+          <div class="uc-tag">Unit 1 · TK–Grade 2 · Digital Citizenship · 4 Weeks</div>
+          <div class="uc-title">Who Sees What You Share?</div>
+          <div class="uc-desc">A young learner's guide to digital privacy, online kindness, and the digital footprint — with family learning coaches as designed instructional partners, not supervisors.</div>
+        </div>
+        <div class="uc-arrow">→</div>
+      </div>
+      <div class="uc-chips">
+        <span class="chip">Full lesson plans</span>
+        <span class="chip">Student materials</span>
+        <span class="chip">4-level rubrics</span>
+        <span class="chip">Coach protocols</span>
+        <span class="chip">ISTE · CASEL · Common Sense Media</span>
+        <span class="chip chip-game">🎮 Data Detective game</span>
+      </div>
+    </a>
+
+    <a href="unit2.html" class="unit-card uc-rust fade-in d1">
+      <div class="uc-header">
+        <div class="uc-stripe"></div>
+        <div class="uc-meta">
+          <div class="uc-tag">Unit 2 · Grades 9–12 · AI Ethics & Media Literacy · 6 Weeks</div>
+          <div class="uc-title">Thinking Machines, Human Consequences</div>
+          <div class="uc-desc">Students use their own algorithmic environments as primary sources — auditing feeds, detecting bias, building ethical design proposals, and defending them before a live panel.</div>
+        </div>
+        <div class="uc-arrow">→</div>
+      </div>
+      <div class="uc-chips">
+        <span class="chip">Full lesson plans</span>
+        <span class="chip">Bias audit materials</span>
+        <span class="chip">Panel rubric</span>
+        <span class="chip">6-week gamification system</span>
+        <span class="chip">AI4K12 · CA ELA · ISTE</span>
+        <span class="chip chip-game">🎮 ORACLE Investigation game</span>
+        <span class="chip chip-game">⚡ AI Trust Trial simulation</span>
+      </div>
+    </a>
+
+    <a href="unit3.html" class="unit-card uc-forest fade-in d2">
+      <div class="uc-header">
+        <div class="uc-stripe"></div>
+        <div class="uc-meta">
+          <div class="uc-tag">Unit 3 · TK–12 · Cross-Grade PBL · 8 Weeks</div>
+          <div class="uc-title">The Neighborhood: A Living Archive</div>
+          <div class="uc-desc">Students across multiple counties build a shared digital archive of local places and stories. Geographic distribution isn't a limitation — it's the engine of the curriculum.</div>
+        </div>
+        <div class="uc-arrow">→</div>
+      </div>
+      <div class="uc-chips">
+        <span class="chip">TK–12 strand design</span>
+        <span class="chip">Cross-grade feedback system</span>
+        <span class="chip">Editorial rubrics</span>
+        <span class="chip">Archive stakes system</span>
+        <span class="chip">CA ELA · ISTE · CASEL</span>
+        <span class="chip chip-game">🎮 The Lost Places game</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── GAMES ── -->
+<div class="section-rule"></div>
+<section class="section accent-gold">
+  <div class="section-eyebrow">Engagement Design</div>
+  <h2 class="section-title">Games that teach<br>through the mechanic.</h2>
+  <p class="section-desc">Each game is a standalone investigation in the style of Carmen Sandiego — students don't answer questions about the curriculum, they live it. Built and verified in-browser, no installation required.</p>
+
+  <div class="games-grid">
+
+    <a href="games/data-detective.html" class="game-card fade-in">
+      <div class="gc-banner gc-banner-teal">
+        <div class="gc-banner-emoji">🔍</div>
+        <div class="gc-banner-label">TK–Grade 2</div>
+      </div>
+      <div class="gc-body">
+        <div class="gc-grade">Unit 1 · Digital Citizenship</div>
+        <div class="gc-name">Data Detective</div>
+        <div class="gc-desc">Chase The Sharer across five internet locations. Identify dangerous information at each scene. Collect clues. Make the arrest.</div>
+      </div>
+      <div class="gc-footer">
+        <span class="gc-play" style="color:var(--teal);">Play Game →</span>
+        <span class="gc-arrow">↗</span>
+      </div>
+    </a>
+
+    <a href="games/oracle-investigation.html" class="game-card fade-in d1">
+      <div class="gc-banner gc-banner-rust">
+        <div class="gc-banner-emoji">⚡</div>
+        <div class="gc-banner-label">Grades 9–12</div>
+      </div>
+      <div class="gc-body">
+        <div class="gc-grade">Unit 2 · AI Ethics</div>
+        <div class="gc-name">The ORACLE Investigation</div>
+        <div class="gc-desc">You're an investigative journalist. ORACLE has spread outputs across five locations — hospital, courthouse, newsroom, school, clinic. Build the case: what did it get right, fabricate, or dangerously oversimplify?</div>
+      </div>
+      <div class="gc-footer">
+        <span class="gc-play" style="color:var(--rust);">Play Game →</span>
+        <span class="gc-arrow">↗</span>
+      </div>
+    </a>
+
+    <a href="games/lost-places.html" class="game-card fade-in d2">
+      <div class="gc-banner gc-banner-forest">
+        <div class="gc-banner-emoji">📜</div>
+        <div class="gc-banner-label">TK–12 · Cross-Grade</div>
+      </div>
+      <div class="gc-body">
+        <div class="gc-grade">Unit 3 · Cross-Grade PBL</div>
+        <div class="gc-name">The Lost Places</div>
+        <div class="gc-desc">Travel across a map of multiple counties. Interview witnesses. Make archival judgments. Preserve stories before the places disappear. 8-minute field investigation with a real archive at the end.</div>
+      </div>
+      <div class="gc-footer">
+        <span class="gc-play" style="color:var(--forest);">Play Game →</span>
+        <span class="gc-arrow">↗</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── RESEARCH TOOL ── -->
+<div class="section-rule"></div>
+<section class="section accent-gold">
+  <div class="section-eyebrow">Research Background</div>
+  <h2 class="section-title">AI Fort Inspector</h2>
+  <p class="section-desc">The curriculum in this portfolio grew from active research. AI Fort Inspector is a trust calibration tool built for students ages 8–14 — a Stanford Create+AI Challenge finalist — examining how learners, particularly neurodivergent ones, calibrate trust in AI outputs.</p>
+
+  <div class="research-card fade-in">
+    <div class="rc-left">
+      <div class="rc-eyebrow">Stanford Create+AI · Finalist</div>
+      <div class="rc-title">AI Fort Inspector<br>v8 — Training Arc</div>
+      <div class="rc-desc">Students inspect AI outputs for six documented failure patterns — Coherence Trap, Precision Illusion, Authority Override, Plausible Drift, Hedge Burial. The tool is the research prototype that directly informed the Unit 2 AI Trust Trial simulation and the ORACLE Investigation game.</div>
+      <a href="https://cedricxlee-cmyk.github.io/AI-Fort-Inspector/inspector_v8.html" target="_blank" class="rc-btn">Launch Inspector v8 ↗</a>
+    </div>
+    <div class="rc-right">
+      <div class="rc-feature">
+        <div class="rcf-title">Trust Calibration Research</div>
+        <div class="rcf-desc">Active study with UC Berkeley (Bird Sellergren) and Canterbury Christ Church University (Dr. Manish Malik) on how neurodivergent learners calibrate AI trust.</div>
+      </div>
+      <div class="rc-feature">
+        <div class="rcf-title">Six Failure Patterns</div>
+        <div class="rcf-desc">Coherence Trap · Precision Illusion · Authority Override · Plausible Drift · Hedge Burial · Edge Case Brittleness — each mapped to curriculum interventions in Unit 2.</div>
+      </div>
+      <div class="rc-feature">
+        <div class="rcf-title">Direct Curriculum Connection</div>
+        <div class="rcf-desc">The AI Trust Trial simulation embedded in Unit 2 and the ORACLE Investigation game both operationalize the failure patterns identified in AI Fort research.</div>
+      </div>
+      <div class="rc-feature">
+        <div class="rcf-title">Neurodiversity Focus</div>
+        <div class="rcf-desc">The research specifically examines how autistic and ADHD learners interact differently with AI confidence signals — with direct implications for Unit 2 differentiation design.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTEXT ── -->
+<div class="section-rule"></div>
+<section class="section accent-teal">
+  <div class="section-eyebrow">Why This Portfolio</div>
+  <h2 class="section-title">What online learning<br>actually requires.</h2>
+  <p class="section-desc">Every design decision in this portfolio was made with online and independent study contexts in mind: TK–12 span, multi-county reach, family learning coaches, independent study model, and a student population already living inside the digital environments these units examine.</p>
+
+  <div class="context-grid">
+    <div class="context-card fade-in">
+      <div class="cc-title">What makes these online-native</div>
+      <ul class="cc-body">
+        <li>Family coaches are designed instructional partners — not supervisors</li>
+        <li>Students' actual devices and feeds are the primary data sources</li>
+        <li>Nine-county distribution is the engine of Unit 3, not a limitation</li>
+        <li>Assessment is portfolio and behavior-based, not test-based</li>
+        <li>Games run entirely in the browser — no installation, no login</li>
+        <li>Cross-grade collaboration is structural, not supplementary</li>
+      </ul>
+    </div>
+    <div class="context-card fade-in d1">
+      <div class="cc-title">What the motivation design solves</div>
+      <ul class="cc-body">
+        <li>Disengaged students cannot fake the AI Trust Trial score</li>
+        <li>TK-2 Passport creates social stakes through coach visibility</li>
+        <li>Archive selection by 9-12 editors makes younger students' work matter</li>
+        <li>Carmen-style games embed learning in the mechanic, not the quiz</li>
+        <li>Editorial accountability makes 9-12 reasoning visible to peers</li>
+        <li>Verification Rate Tracker catches over-acceptance behavior</li>
+      </ul>
+    </div>
+    <div class="context-card fade-in d2">
+      <div class="cc-title">Standards alignment</div>
+      <ul class="cc-body">
+        <li>CA Teaching Credential — Social Science</li>
+        <li>ISTE Digital Citizenship & Empowered Learner standards</li>
+        <li>AI4K12 Big Ideas 4 & 5</li>
+        <li>California ELA standards K–12</li>
+        <li>CASEL Self-Awareness & Social Awareness</li>
+        <li>Common Sense Media K–12 framework</li>
+      </ul>
+    </div>
+    <div class="context-card fade-in d3">
+      <div class="cc-title">Background that shaped this work</div>
+      <ul class="cc-body">
+        <li>7 years K–12 classroom teaching, grades 1–12</li>
+        <li>Graduate coursework: Learning Design & Technology, Harvard Extension</li>
+        <li>Stanford d.school Lead Like It's 2040 Fellow (Wallace Foundation)</li>
+        <li>U.S. Implementation Lead, international AI literacy research study</li>
+        <li>Previous: product management (Belkin International), clinical research</li>
+        <li>AI content evaluation work — Handshake</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div>
+    <div class="sf-name">Cedric Lee</div>
+    <div class="sf-role">K–12 Technology & Media Educator · Curriculum Specialist Candidate</div>
+  </div>
+  <div class="sf-note">Curriculum Portfolio ·  · 2025–26</div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

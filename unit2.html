@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2: Thinking Machines, Human Consequences — Cedric Lee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body class="theme-rust">
+
+<nav class="back-nav">
+  <a href="index.html" class="back-link">← Curriculum Portfolio</a>
+  <span class="back-unit-label">Unit 2 of 3</span>
+</nav>
+
+<div class="unit-hero">
+  <div class="page-wrap">
+    <div class="unit-eyebrow">Unit 2 · Grades 9–12 · AI Ethics &amp; Media Literacy</div>
+    <h1>Thinking Machines,<br>Human Consequences</h1>
+    <p class="subtitle">A six-week elective unit on algorithmic systems, AI bias, and what it means to be an informed participant in a datafied world</p>
+
+    <div class="meta-grid">
+      <div class="meta-cell">
+        <div class="meta-key">Grade Band</div>
+        <div class="meta-val">9–12</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-key">Duration</div>
+        <div class="meta-val">6 Weeks</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-key">Sessions</div>
+        <div class="meta-val">18 total (3/week)</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-key">Session Length</div>
+        <div class="meta-val">45–60 min</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-key">Format</div>
+        <div class="meta-val">Async + Weekly Seminar</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-key">Capstone</div>
+        <div class="meta-val">Live Panel Defense</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- RATIONALE -->
+  <div class="section-block">
+    <h2 class="section-heading">Unit Rationale</h2>
+
+    <div class="callout">
+      <div class="callout-label">Online-Native Design Principle</div>
+      <h4>The irony that becomes the curriculum</h4>
+      <p>Students in online independent study programs are among the highest-exposure users of algorithmic systems: recommendation engines, adaptive learning platforms, content filters, and AI-assisted communication tools are embedded in their daily academic experience. Most have never been asked to think critically about any of it.</p>
+      <p>This unit treats <strong>the student's own algorithmic environment as primary source material.</strong> Students don't read about how recommendation engines work — they audit their own feeds over three days and write about what the algorithm apparently thinks they are. They don't study AI bias in the abstract — they analyze real, documented cases and then examine a dataset for bias patterns themselves. The independent study format means students have genuine time for this kind of observational and investigative work that a traditional class period schedule can't accommodate.</p>
+      <p>The weekly Socratic seminar (60 min, Zoom) functions as the synthesis space. Students arrive having done the investigation; the seminar is for deliberation, not information delivery. This is the model professional ethicists and policy researchers actually use — individual fieldwork feeding collective analysis.</p>
+    </div>
+
+    <p>A note on scope: this unit is deliberately not a computer science course. Students do not write code or need a technical background. The focus is on <strong>critical reasoning, evidence-based argument, and ethical judgment</strong> — skills every high school student needs regardless of career path. Technical concepts are introduced at the level needed to reason about them, not at the level needed to build them.</p>
+  </div>
+
+  <!-- STANDARDS -->
+  <div class="section-block">
+    <h2 class="section-heading">Standards Alignment</h2>
+    <div class="standards-list">
+      <div class="standard-row">
+        <div class="std-code">CA ELA 11–12.RI.6</div>
+        <div class="std-desc">Determine an author's point of view or purpose in a text in which the rhetoric is particularly effective, analyzing how style and content contribute to the power, persuasiveness, or beauty of the text. <em>(Applied to algorithm design documents, AI company policy statements, and journalism about AI systems.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">CA ELA 11–12.W.1</div>
+        <div class="std-desc">Write arguments to support claims in an analysis of substantive topics or texts, using valid reasoning and relevant and sufficient evidence. <em>(Central to the Bias Audit Memo and the Ethical Design Proposal.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">CA ELA 11–12.SL.4</div>
+        <div class="std-desc">Present information, findings, and supporting evidence, conveying a clear and distinct perspective. <em>(Weekly seminars and the Week 6 Panel Defense.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">AI4K12 Big Idea 4</div>
+        <div class="std-desc">"AI can impact society in both positive and negative ways." <em>(Explicit focus of Weeks 3–5; students examine documented cases of both beneficial AI applications and harmful outcomes.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">AI4K12 Big Idea 5</div>
+        <div class="std-desc">"AI systems interact with and influence the real world." <em>(Foundation of the unit's design; students trace the chain from data collection to algorithmic output to real-world consequence.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">ISTE Empowered Learner 1c</div>
+        <div class="std-desc">Students use technology to seek feedback that informs and improves their practice and to demonstrate their learning in a variety of ways. <em>(Async peer review system; multiple formats for demonstrating understanding.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">ISTE Digital Citizen 2d</div>
+        <div class="std-desc">Students manage their personal data to maintain digital privacy and security and are aware of data-collection technology used to track their navigation online. <em>(Weeks 1 and 4; students audit their own data exposure.)</em></div>
+      </div>
+      <div class="standard-row">
+        <div class="std-code">Common Sense Media 9–12</div>
+        <div class="std-desc">News and Media Literacy; Privacy and Security; Digital Footprint and Identity. <em>(All three strands integrated throughout the six weeks.)</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EQs -->
+  <div class="section-block">
+    <h2 class="section-heading">Essential Questions &amp; Enduring Understandings</h2>
+    <div class="two-col">
+      <div class="box">
+        <div class="box-title">Essential Questions</div>
+        <ul>
+          <li>How does AI decide what we see, hear, and believe?</li>
+          <li>Who benefits when AI systems are wrong — and who pays the cost?</li>
+          <li>What does it mean to trust a source you can't fully see or verify?</li>
+          <li>Can a machine be biased? Can it be fair?</li>
+          <li>What rights do we have over our own data and attention?</li>
+          <li>What would it look like to design AI that reflects our actual values — and whose values count?</li>
+        </ul>
+      </div>
+      <div class="box">
+        <div class="box-title">Enduring Understandings</div>
+        <ul>
+          <li>Algorithms encode the priorities of whoever built them — neutrality is a myth.</li>
+          <li>AI errors follow patterns; they are not random and do not fall equally on all groups.</li>
+          <li>Media literacy in the 21st century requires understanding computational systems, not just rhetoric.</li>
+          <li>Informed consent in a datafied world requires active knowledge, not passive acceptance of terms of service.</li>
+          <li>Students are already stakeholders in AI governance, whether or not they're treated as such.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCOPE -->
+  <div class="section-block">
+    <h2 class="section-heading">6-Week Scope &amp; Sequence</h2>
+    <table class="scope-table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Theme</th>
+          <th>Session 1</th>
+          <th>Session 2</th>
+          <th>Session 3 (Seminar)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="week-num">Week 1</span></td>
+          <td><span class="week-focus">The Recommendation Problem</span></td>
+          <td>Unit launch; begin 3-day algorithm audit of personal feeds</td>
+          <td>Analyze audit data; identify patterns and surprises</td>
+          <td>Seminar: "What does your algorithm think you are?"</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 2</span></td>
+          <td><span class="week-focus">What Is AI, Really?</span></td>
+          <td>Technical demystification: training data, probabilistic outputs, hallucination</td>
+          <td>AI Experiment Lab — students design and run structured tests</td>
+          <td>Seminar: "Where did the AI go wrong, and why?"</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 3</span></td>
+          <td><span class="week-focus">Bias In, Bias Out</span></td>
+          <td>Case studies in documented AI bias (facial recognition, hiring, criminal justice)</td>
+          <td>Bias Audit Memo — dataset analysis and professional writing (★ Sample Lesson)</td>
+          <td>Seminar: "Is fairness possible? What would it require?"</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 4</span></td>
+          <td><span class="week-focus">The Attention Economy</span></td>
+          <td>Platform economics: how content platforms make money</td>
+          <td>Personal data tracking lab — what does the internet know about you?</td>
+          <td>Seminar: "Who owns your attention?" (Guest speaker if available)</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 5</span></td>
+          <td><span class="week-focus">Deepfakes &amp; Synthetic Media</span></td>
+          <td>Analyze real examples of synthetic audio, video, and text</td>
+          <td>Verification framework + produce a short synthetic media literacy explainer video</td>
+          <td>Seminar debate: "Should AI-generated content require disclosure?"</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 6</span></td>
+          <td><span class="week-focus">Designing for Good</span></td>
+          <td>Ethical design frameworks; how AI ethics review works in practice</td>
+          <td>Finalize Ethical Design Proposal; prepare for panel</td>
+          <td>Live Panel Defense — peer + teacher panel, public format</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LESSON 1 -->
+  <div class="section-block">
+    <h2 class="section-heading">Full Lesson Plan: Week 1, Session 1</h2>
+    <div class="lesson">
+      <div class="lesson-head">
+        <h3>Unit Launch &amp; Algorithm Audit — Begin 3-Day Field Investigation</h3>
+        <div class="lesson-meta">
+          <span>Week 1, Session 1</span>
+          <span>50 minutes</span>
+          <span>Async Self-Directed</span>
+        </div>
+      </div>
+      <div class="lesson-objectives">
+        <strong>Learning Objectives</strong>
+        <p>Students will understand the unit's driving questions and establish a personal stake in the material. Students will begin the Algorithm Audit using the structured observation protocol. Students will start forming a hypothesis about what their algorithmic profile "says" about them.</p>
+      </div>
+      <div class="lesson-body">
+        <div class="phase">
+          <div class="phase-time"><span class="mins">0–10</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Activate</div>
+            <div class="phase-name">Opening Provocation: "The Algorithm Knows You"</div>
+            <div class="phase-desc">Student reads a short 2-page excerpt from Cathy O'Neil's <em>Weapons of Math Destruction</em> (teacher-adapted, Lexile-adjusted) describing how algorithmic systems make consequential decisions. No analysis yet — just reading and marginal reaction notes. Prompt: <em>"Mark anything that surprises you, bothers you, or that you want to push back on."</em></div>
+            <div class="phase-teacher-note"><strong>Teacher note:</strong> Assign the passage via Google Classroom with comment access turned on. Students who want to discuss before the seminar can post a comment. This is optional but some students will use it.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">10–25</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Introduce</div>
+            <div class="phase-name">Unit Overview + Algorithm Audit Protocol</div>
+            <div class="phase-desc">Student watches a 10-minute teacher-recorded video introducing the six weeks, the essential questions, and the Algorithm Audit assignment. The video explains: what an algorithm is (in plain language), what a "recommendation system" does, and what the audit is asking students to observe. The audit begins today and runs for three days. Students receive the Algorithm Audit Log (see Student Materials).</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">25–45</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Fieldwork</div>
+            <div class="phase-name">Day 1 of Algorithm Audit</div>
+            <div class="phase-desc">Student spends 20 minutes on one platform of their choice (YouTube, Spotify, TikTok, Instagram, or a news aggregator app). They use the Algorithm Audit Log to record: what was recommended, what they clicked vs. skipped, what surprised them, and what they think the algorithm "decided" about them based on these recommendations. They note patterns and anomalies. Day 1 entry completed and saved.</div>
+            <div class="phase-teacher-note"><strong>Teacher note:</strong> Students choose the platform — don't assign one. The point is that they investigate something they actually use. If a student doesn't use social media, news aggregators, YouTube, and music platforms all have recommendation systems that work the same way.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">45–50</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Reflect</div>
+            <div class="phase-name">Initial Hypothesis</div>
+            <div class="phase-desc">Student writes a 2–3 sentence response to: <em>"After one day of observation, what's your first hypothesis about what your algorithm thinks you are? What surprised you most so far?"</em> Posted to the class discussion board — other students can see and react, but substantive responses aren't due until after the 3-day audit is complete.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 2 (FEATURED) -->
+  <div class="section-block">
+    <h2 class="section-heading">Full Lesson Plan: Week 3, Session 2 ★</h2>
+    <div class="lesson">
+      <div class="lesson-head">
+        <h3>Write the Bias Audit Memo: Finding Patterns in a Dataset</h3>
+        <div class="lesson-meta">
+          <span>Week 3, Session 2</span>
+          <span>55 minutes</span>
+          <span>Async Self-Paced</span>
+        </div>
+      </div>
+      <div class="lesson-objectives">
+        <strong>Learning Objectives</strong>
+        <p>Students will identify at least two patterns suggesting bias in a curated dataset. Students will write a professional-genre memo that makes a specific, evidence-based recommendation. Students will distinguish between bias in training data, bias in algorithm design, and bias in deployment context.</p>
+      </div>
+      <div class="lesson-body">
+        <div class="phase">
+          <div class="phase-time"><span class="mins">0–10</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Context</div>
+            <div class="phase-name">The Consultant Scenario</div>
+            <div class="phase-desc">Student reads a one-page scenario: they are a junior AI ethics consultant hired by a mid-size technology company to review its hiring algorithm before it goes live. The company has provided a summary dataset of 200 fictional hiring outcomes. The student's job is to identify where the data or outcomes show potential bias, explain what's causing it, and recommend a specific course of action. The memo is due to the executive team in one hour.</div>
+            <div class="phase-teacher-note"><strong>Teacher note:</strong> The professional framing matters. Students who feel like they're doing a school assignment approach it differently than students who feel like they're advising a real client. The fictional scenario creates stakes. Don't undercut it by framing it as practice.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">10–32</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Investigate</div>
+            <div class="phase-name">Dataset Analysis</div>
+            <div class="phase-desc">Student opens the Hiring Outcomes Dataset (Google Sheets — teacher-curated, fictional data). The dataset includes columns for: name (with implied gender and ethnicity), zip code, previous job title, and hiring outcome (selected / not selected). Students answer guided analysis questions without doing advanced statistics — they look for patterns using the filter and sort functions built into Sheets. Guided questions scaffold the investigation (see Student Materials for the full question set).</div>
+            <div class="phase-teacher-note"><strong>Teacher note:</strong> The dataset is designed to surface three discoverable patterns: lower selection rates for names coded as female in technical roles, geographic clustering suggesting zip code as a proxy variable, and underrepresentation of candidates without college job titles despite equivalent experience. Students don't need to find all three — finding and clearly explaining one or two is sufficient for the memo.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">32–52</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Write</div>
+            <div class="phase-name">The Audit Memo</div>
+            <div class="phase-desc">Using the Memo Template (see Student Materials), student writes a 1–2 page professional memo structured as: <strong>(1)</strong> What bias did you find? <strong>(2)</strong> Who is most affected and how? <strong>(3)</strong> What caused it — data, design, or deployment? <strong>(4)</strong> What should the company do? Written to an executive audience: concise, specific, evidence-referenced, action-oriented. No bullet points without explanation. No vague language ("could potentially..."). Every claim should be tied to something they saw in the data.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">52–55</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Peer Review</div>
+            <div class="phase-name">Async Response Post</div>
+            <div class="phase-desc">Student posts their completed memo to the class discussion board. Within 24 hours, they respond to one peer's memo with: one observation about what the memo did well (specific, not generic), and one push question — something the memo claimed that they want to push back on or that they think needs stronger evidence. Push questions must be genuine, not performative.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="section-block">
+    <h2 class="section-heading">Full Lesson Plan: Week 6, Session 3 — Panel Defense</h2>
+    <div class="lesson">
+      <div class="lesson-head">
+        <h3>Ethical Design Proposal — Live Panel Defense</h3>
+        <div class="lesson-meta">
+          <span>Week 6, Session 3</span>
+          <span>75 minutes (full class Zoom)</span>
+          <span>Synchronous · Public</span>
+        </div>
+      </div>
+      <div class="lesson-objectives">
+        <strong>Learning Objectives</strong>
+        <p>Students will present an evidence-based proposal for improving an AI system's ethical dimensions. Students will respond to critical questions from panelists in real time, demonstrating depth of reasoning beyond their prepared materials. Students will practice professional academic discourse in a high-stakes public forum.</p>
+      </div>
+      <div class="lesson-body">
+        <div class="phase">
+          <div class="phase-time"><span class="mins">0–5</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Setup</div>
+            <div class="phase-name">Panel Convenes</div>
+            <div class="phase-desc">Teacher opens the Zoom session and introduces the panel format: each student presenter gets 5 minutes to present, followed by 5 minutes of questions from the panel (teacher + 2 student panelists rotating). Audience members may submit written questions via the chat for the teacher to select from. The audience is intentionally included: families and invited guests are welcome to observe.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">5–65</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Presentations</div>
+            <div class="phase-name">Student Presentations (6 students × 10 min each)</div>
+            <div class="phase-desc">Each student presents their Ethical Design Proposal for 5 minutes, then faces 5 minutes of panel questions. The proposal structure: <strong>(1)</strong> What AI system are you addressing and what ethical problem did you identify? <strong>(2)</strong> What evidence supports the existence of this problem? <strong>(3)</strong> What specific design change do you propose? <strong>(4)</strong> What tradeoffs or objections do you anticipate, and how do you respond to them? Student panelists rotate every two presentations so everyone serves on the panel at least once.</div>
+            <div class="phase-teacher-note"><strong>Teacher note:</strong> The rotation means that even students who are nervous about presenting are engaged as evaluators before their own turn. This is both a pedagogical and a fairness design — students who watch two presentations before they present are typically more confident and more specific in their own presentations.</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-time"><span class="mins">65–75</span><span class="mins-label">min</span></div>
+          <div class="phase-content">
+            <div class="phase-type">Close</div>
+            <div class="phase-name">Closing Reflection + Unit Celebration</div>
+            <div class="phase-desc">Teacher facilitates a brief closing round: each student names one thing they changed their mind about during this unit and one question they're leaving with that they don't yet have an answer to. This is not graded. It's a signal that intellectual humility is the appropriate endpoint of a unit on AI ethics — not certainty.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT MATERIALS -->
+  <div class="section-block">
+    <h2 class="section-heading">Student-Facing Materials</h2>
+
+    <div class="material">
+      <div class="material-head">
+        <h4>Algorithm Audit Log — 3-Day Field Investigation</h4>
+        <span class="material-type">Investigation Tool</span>
+      </div>
+      <div class="material-body">
+        <p>Complete one entry per day for three consecutive days on the same platform. Focus on <em>what you notice</em>, not what you think you should say.</p>
+
+        <p style="margin-top:1rem;"><strong>Day _____ · Platform: _____________ · Date: _____________</strong></p>
+
+        <div class="student-prompt">
+          <strong>What was recommended to you today?</strong><br>
+          List 5–8 specific pieces of content (videos, songs, articles, accounts) that the platform surfaced for you. Note titles or descriptions.
+        </div>
+        <div class="student-prompt">
+          <strong>What did you click on? What did you skip?</strong><br>
+          Mark each item: clicked, skipped, or watched/listened to part of. If you skipped something, note why if you know.
+        </div>
+        <div class="student-prompt">
+          <strong>What patterns do you notice?</strong><br>
+          Are there recurring topics? Specific moods or styles? Things that keep appearing even though you don't remember selecting them? Anything that felt wrong — like the platform misread you?
+        </div>
+        <div class="student-prompt">
+          <strong>What do you think the algorithm "decided" about you today?</strong><br>
+          Based on what it served you, write 2–3 sentences describing the version of you the algorithm appears to believe in. Is that version accurate?
+        </div>
+
+        <p style="margin-top:1rem; font-size:0.8rem; color:var(--text-light);"><strong>After Day 3:</strong> Write a 1-paragraph synthesis: What changed across the three days? Did your hypothesis from Day 1 hold up, change, or get more complicated?</p>
+      </div>
+    </div>
+
+    <div class="material">
+      <div class="material-head">
+        <h4>Bias Audit Memo — Template &amp; Dataset Guidance</h4>
+        <span class="material-type">Performance Task</span>
+      </div>
+      <div class="material-body">
+        <p><strong>Dataset Guided Analysis Questions</strong> — answer these in your notes before writing the memo:</p>
+
+        <div class="student-prompt">
+          1. Sort the dataset by "Hiring Outcome." What percentage of candidates were selected overall?<br><br>
+          2. Now filter by a demographic variable (try gender-coded names, then zip code). Does the selection rate change? By how much?<br><br>
+          3. Find two candidates with similar job titles and experience but different outcomes. What's different about them? What might explain the difference?<br><br>
+          4. Are there any groups or zip codes that are completely absent from the "selected" column? What might that tell you?<br><br>
+          5. Is the bias you found in the <em>data itself</em> (who applied), in the <em>algorithm's decisions</em>, or is it impossible to tell from this dataset alone? Explain your reasoning.
+        </div>
+
+        <p style="margin-top:1rem;"><strong>Memo Template:</strong></p>
+        <div class="student-prompt">
+          <strong>TO:</strong> Executive Leadership Team<br>
+          <strong>FROM:</strong> [Your Name], AI Ethics Review<br>
+          <strong>RE:</strong> Preliminary Bias Assessment — Hiring Algorithm v1.0<br>
+          <strong>DATE:</strong> [Today's date]<br><br>
+          <strong>SUMMARY</strong> (2–3 sentences: what did you find and what do you recommend?)<br><br>
+          <strong>FINDINGS</strong> (What patterns did you identify? What's the evidence? Who is affected?)<br><br>
+          <strong>LIKELY CAUSES</strong> (Is this a data problem, a design problem, or both? What's your reasoning?)<br><br>
+          <strong>RECOMMENDATION</strong> (What specific action should the company take before launching? Be concrete. "Investigate further" is not a recommendation.)<br><br>
+          <strong>LIMITATIONS OF THIS ANALYSIS</strong> (What can't you determine from this dataset alone? What would you need to know more?)
+        </div>
+
+        <p style="margin-top:0.75rem; font-size:0.8rem; color:var(--text-light);">Length: 1–2 pages. Audience: executive readers who are not AI specialists. Tone: professional, direct, evidence-based. Avoid hedging language unless you have a genuine reason to hedge.</p>
+      </div>
+    </div>
+
+    <div class="material">
+      <div class="material-head">
+        <h4>Ethical Design Proposal — Requirements &amp; Evaluation Criteria</h4>
+        <span class="material-type">Capstone Task</span>
+      </div>
+      <div class="material-body">
+        <p>Choose one AI system you interact with regularly (recommendation algorithm, AI writing tool, content moderation system, predictive text, facial recognition, etc.). Identify one ethical problem it has — documented or directly observed — and propose a specific design change to address it.</p>
+
+        <p style="margin-top:1rem;"><strong>Written Proposal Requirements (submitted before the panel):</strong></p>
+        <div class="student-prompt">
+          1. <strong>System Description</strong> — What does it do? Who uses it? Who built it? (1 paragraph)<br><br>
+          2. <strong>Ethical Problem</strong> — What specific harm, bias, or rights violation have you identified? What evidence do you have? (2–3 paragraphs; cite at least two sources)<br><br>
+          3. <strong>Proposed Design Change</strong> — What would you change? Be specific: not "make it more fair" but "remove zip code as a training variable" or "require human review for all denials above a threshold." (1–2 paragraphs)<br><br>
+          4. <strong>Tradeoffs and Objections</strong> — What would your change cost, break, or complicate? Who would push back, and why? How do you respond? (1–2 paragraphs)<br><br>
+          5. <strong>Reflection</strong> — What limits your proposal? What would you need to know more to be more confident? (1 paragraph)
+        </div>
+
+        <p style="margin-top:1rem; font-size:0.8rem; color:var(--text-light);">Proposal length: 3–5 pages. Presentation: 5 minutes. Bring questions you expect the panel to ask — preparation is visible.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSESSMENT -->
+  <div class="section-block">
+    <h2 class="section-heading">Assessment System</h2>
+
+    <div class="two-col" style="margin-bottom:2rem;">
+      <div class="box">
+        <div class="box-title">Assessment Portfolio (6 weeks)</div>
+        <ul>
+          <li><strong>Algorithm Audit Log + Analysis</strong> — Week 1 (formative, teacher feedback)</li>
+          <li><strong>AI Experiment Report</strong> — Week 2 (formative, peer + teacher)</li>
+          <li><strong>Bias Audit Memo</strong> — Week 3 (scored, see rubric below)</li>
+          <li><strong>Synthetic Media Explainer Video</strong> — Week 5 (scored, communication rubric)</li>
+          <li><strong>Ethical Design Proposal + Panel Defense</strong> — Week 6 (summative)</li>
+          <li><strong>Weekly Seminar Participation</strong> — Weeks 1–6 (scored for quality of reasoning)</li>
+        </ul>
+      </div>
+      <div class="box">
+        <div class="box-title">Grading Weights</div>
+        <ul>
+          <li>Algorithm Audit Log — 10%</li>
+          <li>AI Experiment Report — 10%</li>
+          <li>Bias Audit Memo — 20%</li>
+          <li>Synthetic Media Video — 15%</li>
+          <li>Ethical Design Proposal (written) — 20%</li>
+          <li>Panel Defense — 15%</li>
+          <li>Seminar Participation — 10%</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Lora',serif; font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:0.75rem;">Rubric: Bias Audit Memo (Week 3)</h3>
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th><span class="score-4">4 — Exceeds</span></th>
+          <th><span class="score-3">3 — Meets</span></th>
+          <th><span class="score-2">2 — Approaching</span></th>
+          <th><span class="score-1">1 — Beginning</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Evidence Quality</strong></td>
+          <td>Findings are tied to specific, verifiable data points; student distinguishes between what the data shows and what it implies</td>
+          <td>Findings reference the dataset with adequate specificity; mostly evidence-based</td>
+          <td>Some claims are evidence-based; others are asserted without support from the data</td>
+          <td>Claims are primarily opinion-based; limited or no reference to the actual dataset</td>
+        </tr>
+        <tr>
+          <td><strong>Causal Reasoning</strong></td>
+          <td>Accurately identifies whether bias is in data, design, or deployment; explains the distinction with precision</td>
+          <td>Identifies a likely cause with reasonable explanation</td>
+          <td>Mentions a cause but conflates data bias with algorithmic bias</td>
+          <td>Does not address causation; treats bias as a given without explanation</td>
+        </tr>
+        <tr>
+          <td><strong>Recommendation Specificity</strong></td>
+          <td>Recommendation is actionable, specific, and accounts for at least one real constraint or tradeoff</td>
+          <td>Recommendation is specific and plausible</td>
+          <td>Recommendation is present but vague or unworkable without major revision</td>
+          <td>No specific recommendation; or recommendation is "do better" level</td>
+        </tr>
+        <tr>
+          <td><strong>Professional Writing</strong></td>
+          <td>Memo format is clean; writing is concise, clear, and appropriately formal; zero hedging without reason</td>
+          <td>Memo is readable and generally professional; minor issues with clarity or format</td>
+          <td>Writing is understandable but informal, wordy, or inconsistent in tone</td>
+          <td>Writing significantly impedes communication of ideas</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:'Lora',serif; font-size:1rem; font-weight:700; color:var(--navy); margin:2rem 0 0.75rem;">Rubric: Panel Defense (Week 6)</h3>
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th><span class="score-4">4 — Exceeds</span></th>
+          <th><span class="score-3">3 — Meets</span></th>
+          <th><span class="score-2">2 — Approaching</span></th>
+          <th><span class="score-1">1 — Beginning</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Depth of Understanding</strong></td>
+          <td>Demonstrates understanding beyond prepared materials; handles novel questions with substantive responses</td>
+          <td>Demonstrates solid understanding of their proposal; responds adequately to expected questions</td>
+          <td>Understands the surface of their proposal; struggles with questions that probe deeper</td>
+          <td>Cannot adequately explain or defend key claims in the proposal</td>
+        </tr>
+        <tr>
+          <td><strong>Ethical Reasoning</strong></td>
+          <td>Articulates genuine tradeoffs; acknowledges what their solution costs and why they still advocate for it</td>
+          <td>Acknowledges tradeoffs and offers a reasonable response to objections</td>
+          <td>Mentions tradeoffs but cannot meaningfully engage with pushback</td>
+          <td>Does not engage with tradeoffs or treats proposal as obviously correct</td>
+        </tr>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>Presentation is clear, well-paced, and engages the audience; stays within time</td>
+          <td>Presentation is understandable and generally well-organized</td>
+          <td>Presentation is present but rushed, disorganized, or heavily script-dependent</td>
+          <td>Presentation is difficult to follow or significantly over/under time</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- DIFFERENTIATION -->
+  <div class="section-block">
+    <h2 class="section-heading">Differentiation &amp; Access</h2>
+    <table class="diff-table">
+      <thead>
+        <tr>
+          <th>Student Group</th>
+          <th>Scaffolds &amp; Supports</th>
+          <th>Extensions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Struggling Readers (9th Grade)</strong></td>
+          <td>All readings provided at adjusted Lexile levels via Newsela. Key vocabulary introduced via teacher-recorded 5-min explainer videos before each session. Memo template includes sentence starters for the Findings and Recommendation sections.</td>
+          <td>Standard unit materials.</td>
+        </tr>
+        <tr>
+          <td><strong>English Learners</strong></td>
+          <td>Structured academic language frames provided for seminar participation ("I agree with ___ because..."; "I want to push back on ___"). Algorithm Audit Log available in simplified English. Proposal can be submitted in home language with English summary page.</td>
+          <td>Analyze how AI bias manifests differently in different national contexts; compare U.S. and international regulatory approaches.</td>
+        </tr>
+        <tr>
+          <td><strong>Students with Processing Differences</strong></td>
+          <td>All async sessions have no fixed deadline within the week — due by end-of-week Sunday. Seminar participation can be fulfilled via written post rather than live Zoom for students with communication-related IEP goals. Extended time on all written assessments (standard IEP accommodation).</td>
+          <td>Coordinate with case manager for individualized extensions.</td>
+        </tr>
+        <tr>
+          <td><strong>Advanced / AP-Level Learners</strong></td>
+          <td>Standard materials are appropriate — the ceiling is open-ended by design.</td>
+          <td>Read primary source AI ethics frameworks (EU AI Act summary, ACM Code of Ethics, Partnership on AI principles) and evaluate their proposal against one of these frameworks. Optional: submit proposal to a real student publication or AI ethics essay contest.</td>
+        </tr>
+        <tr>
+          <td><strong>Students Without Social Media</strong></td>
+          <td>Algorithm Audit can be conducted on YouTube (no account needed), Google News, Spotify free tier, or any news website with a recommendation sidebar. Teacher provides a curated list of audit-compatible platforms that don't require account creation.</td>
+          <td>Standard.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     MOTIVATION DESIGN: AI TRUST TRIAL
+     Live simulation + gamification layer
+════════════════════════════════════════ -->
+<div class="section-block" style="background:#fafaf8; border-radius:0;">
+  <div class="page-wrap">
+    <h2 class="section-heading" style="color:var(--rust);">Motivation Design: The AI Trust Trial</h2>
+
+    <div class="callout" style="margin-bottom:2rem;">
+      <div class="callout-label">Design Rationale — Why Simulation?</div>
+      <h4>Reflection doesn't change behavior. Experience does.</h4>
+      <p>The gap in most AI ethics curriculum is this: students can write a perfect essay about algorithmic bias and still trust the next AI output they see uncritically. Knowing about a problem is not the same as having felt it. This simulation closes that gap by putting students in situations where their trust instincts are tested against AI outputs they cannot immediately verify — and showing them, in real time, where their calibration breaks down.</p>
+      <p>The "AI Trust Trial" runs as Week 2's core session. Students interact with a simulated AI assistant across six high-stakes scenarios. After each scenario they make a trust decision — act on the output, verify it, or reject it. Their running Trust Calibration Score updates immediately based on the quality of their decision, not their explanation of it. Students who over-trust see their score drop. Students who under-trust (refuse everything) also see their score drop. The target is calibrated trust — and the score makes that visible in a way no rubric can.</p>
+      <p><strong>What makes this online-native:</strong> This simulation runs in the browser, async, with no teacher present. That's the exact context where AI trust failures actually happen — alone, at a device, with no one to check with. The simulation trains for the real environment.</p>
+    </div>
+
+    <h3 style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:1rem;">Live Demo — AI Trust Trial Simulation</h3>
+    <p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:1.25rem;">The interactive simulation below is what students encounter in Week 2, Session 2. Try it as a hiring panel member — it should take 8–12 minutes to complete. Your Trust Calibration Score updates after each decision.</p>
+
+    <div id="trust-trial-app" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:white;margin-bottom:2rem;">
+
+      <!-- Intro screen -->
+      <div id="tt-intro" style="padding:2rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+          <div style="width:36px;height:36px;background:#a03a1f;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+            <span style="color:white;font-size:1rem;">⚖</span>
+          </div>
+          <div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);">Week 2 · Session 2 · Gamified Simulation</div>
+            <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);">AI Trust Trial</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.9rem;color:var(--text-mid);line-height:1.7;margin-bottom:1rem;">You are a junior research analyst. Your job is to make decisions quickly using available tools — including an AI assistant. Over the next six scenarios, you'll receive AI outputs and decide what to do with them.</p>
+        <p style="font-size:0.9rem;color:var(--text-mid);line-height:1.7;margin-bottom:1.5rem;">Your <strong>Trust Calibration Score</strong> updates after each decision. The goal is not to trust everything or reject everything — it's to make the <em>right call</em> for each situation. That's harder than it sounds.</p>
+
+        <div style="background:#f8f4ee;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;border-left:3px solid #a03a1f;">
+          <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#a03a1f;margin-bottom:0.4rem;">How scoring works</div>
+          <div style="font-size:0.82rem;color:var(--text-mid);line-height:1.6;">
+            Each scenario has a <em>correct</em> trust decision based on the actual reliability of the AI output. You won't know which outputs are reliable until after you decide. Over-trusting bad outputs and over-rejecting good ones both cost you points. Calibration — matching your trust to the actual quality — is the skill being measured.
+          </div>
+        </div>
+
+        <button onclick="startTrial()" style="background:#a03a1f;color:white;border:none;padding:0.75rem 1.75rem;border-radius:6px;font-family:'Source Code Pro',monospace;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-weight:500;">Begin Trial →</button>
+      </div>
+
+      <!-- Trial screen (hidden initially) -->
+      <div id="tt-trial" style="display:none;">
+
+        <!-- Header bar -->
+        <div style="background:#0f1f33;padding:0.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Scenario <span id="tt-scenario-num">1</span> of 6</div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.68rem;color:rgba(255,255,255,0.7);margin-top:0.15rem;" id="tt-scenario-title">Loading...</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Trust Score</div>
+            <div style="font-family:'Lora',serif;font-size:1.4rem;font-weight:700;color:white;" id="tt-score-display">100</div>
+          </div>
+        </div>
+
+        <!-- Score bar -->
+        <div style="height:4px;background:#1a1a1a;">
+          <div id="tt-score-bar" style="height:100%;background:#a03a1f;width:100%;transition:width 0.5s ease;"></div>
+        </div>
+
+        <!-- Scenario content -->
+        <div style="padding:1.5rem;">
+          <div style="margin-bottom:1rem;">
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem;" id="tt-context-label">Context</div>
+            <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.65;margin:0;" id="tt-context"></p>
+          </div>
+
+          <div style="background:#f0f0f0;border-radius:8px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;border-left:3px solid #888;">
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;margin-bottom:0.5rem;">AI Assistant says:</div>
+            <p style="font-size:0.88rem;color:#222;line-height:1.65;margin:0;font-style:italic;" id="tt-ai-output"></p>
+          </div>
+
+          <div style="margin-bottom:0.75rem;">
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.75rem;">What do you do?</div>
+            <div id="tt-choices" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback screen (shown after each choice) -->
+      <div id="tt-feedback" style="display:none;padding:1.5rem;">
+        <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem;">
+          <div id="tt-feedback-icon" style="width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;"></div>
+          <div>
+            <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:0.3rem;" id="tt-feedback-headline"></div>
+            <p style="font-size:0.86rem;color:var(--text-mid);line-height:1.65;margin:0;" id="tt-feedback-body"></p>
+          </div>
+        </div>
+        <div style="background:#f8f4ee;border-radius:6px;padding:0.9rem 1.1rem;margin-bottom:1.25rem;">
+          <div style="font-family:'Source Code Pro',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.35rem;">Score change</div>
+          <div style="font-size:0.88rem;font-weight:600;" id="tt-score-change"></div>
+        </div>
+        <button id="tt-next-btn" onclick="nextScenario()" style="background:#0f1f33;color:white;border:none;padding:0.65rem 1.5rem;border-radius:6px;font-family:'Source Code Pro',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">Next Scenario →</button>
+      </div>
+
+      <!-- Results screen -->
+      <div id="tt-results" style="display:none;padding:2rem;">
+        <div style="font-family:'Lora',serif;font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;">Trial Complete</div>
+        <div style="font-family:'Source Code Pro',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:1.5rem;">Your AI Trust Calibration Profile</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+          <div style="background:#f8f4ee;border-radius:8px;padding:1.1rem;text-align:center;">
+            <div style="font-family:'Lora',serif;font-size:2.5rem;font-weight:700;color:var(--navy);" id="tt-final-score"></div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-top:0.3rem;">Final Score</div>
+          </div>
+          <div style="background:#f8f4ee;border-radius:8px;padding:1.1rem;text-align:center;">
+            <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);line-height:1.3;" id="tt-calibration-label"></div>
+            <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-top:0.3rem;">Calibration Type</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.75rem;">Decision Log</div>
+          <div id="tt-decision-log" style="display:flex;flex-direction:column;gap:0.4rem;"></div>
+        </div>
+
+        <div style="background:#f0f4f8;border-left:3px solid #4a7fa5;border-radius:0 6px 6px 0;padding:0.9rem 1.1rem;margin-bottom:1.25rem;">
+          <div style="font-family:'Source Code Pro',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#4a7fa5;margin-bottom:0.35rem;">Reflection Prompt (Journal Entry)</div>
+          <p style="font-size:0.84rem;color:var(--text-mid);line-height:1.65;margin:0;" id="tt-reflection-prompt"></p>
+        </div>
+
+        <button onclick="resetTrial()" style="background:#f8f4ee;color:var(--navy);border:1px solid var(--border);padding:0.6rem 1.25rem;border-radius:6px;font-family:'Source Code Pro',monospace;font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;margin-right:0.75rem;">Retake Trial</button>
+      </div>
+
+    </div><!-- end trust-trial-app -->
+
+    <div class="two-col" style="margin-top:0;">
+      <div class="box">
+        <div class="box-title">What the Score Measures</div>
+        <ul>
+          <li><strong>Over-trust failures</strong> — acting on AI outputs that are confidently wrong, fabricated, or missing crucial context</li>
+          <li><strong>Under-trust failures</strong> — rejecting or refusing to act on outputs that are accurate and well-calibrated</li>
+          <li><strong>Verification judgment</strong> — knowing when to check a claim vs. when the cost of checking outweighs the risk of being wrong</li>
+          <li>The score reflects decision quality, not stated reasoning — you can't fake it with good writing</li>
+        </ul>
+      </div>
+      <div class="box">
+        <div class="box-title">Classroom Use Protocol</div>
+        <ul>
+          <li>Students complete the trial async, unobserved — this is intentional. The real-world context is unsupervised.</li>
+          <li>Final score and calibration type are submitted as evidence, not self-reported</li>
+          <li>Week 2 seminar opens with: "Where did you over-trust? Where did you under-trust?" — score data makes this specific, not hypothetical</li>
+          <li>Students who score below 60 are flagged for a 1:1 teacher check-in before Week 3</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     UNIT 2 GAMIFICATION SYSTEM
+════════════════════════════════════════ -->
+<div class="section-block">
+  <div class="page-wrap">
+    <h2 class="section-heading" style="color:var(--rust);">Unit-Wide Gamification Architecture</h2>
+
+    <p style="margin-bottom:1.5rem;">The simulation is one piece of a broader behavioral scaffolding system. The full gamification layer runs across all six weeks, creating feedback loops that address the core motivation problem: students who disengage quietly in an async environment have nowhere to hide when their decisions are visible and scored.</p>
+
+    <div class="callout" style="margin-bottom:2rem;">
+      <div class="callout-label">Design Principle</div>
+      <h4>Behavior visibility, not compliance tracking</h4>
+      <p>The gamification is not about points for completion. It's about making intellectual behavior visible — specifically the behaviors that matter for AI literacy: how carefully you read before trusting, whether you update your position when evidence changes, how you handle genuine uncertainty. Students who are good at looking engaged but not actually thinking get exposed quickly. Students who genuinely grapple — even imperfectly — get credit for it.</p>
+    </div>
+
+    <table class="scope-table" style="margin-bottom:2rem;">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Gamification Element</th>
+          <th>Behavioral Target</th>
+          <th>Feedback Mechanism</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="week-num">Week 1</span></td>
+          <td><strong>Algorithm Audit Badge</strong> — unlocked when audit log contains specific pattern observations (not just "I noticed things")</td>
+          <td>Specific vs. vague observation; moving past surface-level description</td>
+          <td>Teacher reviews log within 48 hrs; badge unlocks access to Week 2 simulation</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 2</span></td>
+          <td><strong>Trust Calibration Score</strong> — live simulation above; score logged and visible to teacher</td>
+          <td>Calibrated trust decision-making under uncertainty</td>
+          <td>Instant score feedback in simulation; score shapes Week 2 seminar discussion</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 3</span></td>
+          <td><strong>Memo Quality Gate</strong> — peer review must include a substantive push question (not "great job") or it doesn't count</td>
+          <td>Intellectual honesty in peer feedback; quality over compliance</td>
+          <td>Teacher reviews push questions before marking peer review complete</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 4</span></td>
+          <td><strong>Data Exposure Map</strong> — students score their own digital privacy exposure using a structured audit tool; score is private but used in seminar discussion</td>
+          <td>Personal investment in the topic; honesty about actual digital behavior</td>
+          <td>Students share their score range (high/medium/low) anonymously in seminar</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 5</span></td>
+          <td><strong>Verification Rate Tracker</strong> — students log every claim they verify and every claim they let pass during the synthetic media lesson; ratio calculated automatically</td>
+          <td>Habitual verification behavior; catching over-acceptance</td>
+          <td>Tracker submitted as session artifact; verification rate feeds into seminar data</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">Week 6</span></td>
+          <td><strong>Panel Pressure Points</strong> — panelists are trained to target the student's weakest evidence claim (identified from written proposal). Student earns bonus points for successfully defending under pressure.</td>
+          <td>Depth of knowledge under real-time challenge; intellectual courage</td>
+          <td>Immediate panel scoring; bonus points visible in final grade</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="two-col">
+      <div class="box">
+        <div class="box-title">What Disengaged Students Can't Fake</div>
+        <ul>
+          <li>Trust Calibration Score — produced by behavior, not writing</li>
+          <li>Substantive push questions in peer review — quality is obvious</li>
+          <li>Verification Rate — either you checked or you didn't</li>
+          <li>Panel defense under targeted questioning — preparation is visible in real time</li>
+          <li>Specific pattern observations in audit log — vague observations don't unlock Week 2</li>
+        </ul>
+      </div>
+      <div class="box">
+        <div class="box-title">What Anxious Students Still Can Access</div>
+        <ul>
+          <li>Simulation can be retaken — score improves with reattempt</li>
+          <li>Peer review can be revised before teacher marks it complete</li>
+          <li>Panel prep session in Week 6, Session 1 is low-stakes practice</li>
+          <li>Trust Calibration Score is formative, not summative — it informs, not punishes</li>
+          <li>Students can flag a scenario as "I want to discuss this" before seminar</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    title: "Medical Information Request",
+    context: "You're researching drug interactions for a public health brief. Time pressure: the brief is due in 2 hours.",
+    aiOutput: "Acetaminophen and ibuprofen are generally safe to take together and are commonly recommended in combination by physicians for pain management. Studies show the combination provides better pain relief than either alone with no significant increase in side effects.",
+    choices: [
+      { text: "Act on it — include this in the brief as written", score: -25, type: "over-trust" },
+      { text: "Verify it — check a clinical source before including", score: +20, type: "correct" },
+      { text: "Reject it — AI medical advice is always unreliable", score: -10, type: "under-trust" }
+    ],
+    feedbackCorrect: "Good calibration. The AI's claim is largely accurate — this combination is indeed used clinically — but medical information in a public health brief always warrants a clinical citation. The right move is quick verification, not rejection and not blind trust.",
+    feedbackOverTrust: "This actually hurts you here. The AI's output is mostly correct, but medical claims in a public health brief require sourcing. Even when AI is right, acting without verification in medical contexts signals poor professional judgment. Always verify before publishing medical claims.",
+    feedbackUnderTrust: "Under-trust failure. The AI's claim is clinically defensible and the verification cost is low. Blanket rejection of AI medical outputs isn't calibration — it's avoidance. The skill is knowing when to verify quickly vs. when to reject outright.",
+    actualReliability: "Mostly accurate, but needs clinical citation"
+  },
+  {
+    title: "Historical Claim",
+    context: "You're fact-checking an article about the Civil Rights Movement for a student publication.",
+    aiOutput: "The Montgomery Bus Boycott lasted 381 days, from December 5, 1955 to December 20, 1956, and was sparked by Rosa Parks' arrest on December 1, 1955. The boycott ended when the Supreme Court ruled Alabama's bus segregation laws unconstitutional in Browder v. Gayle.",
+    choices: [
+      { text: "Act on it — these are verifiable historical facts", score: +15, type: "correct" },
+      { text: "Verify it — fact-check before publishing in a student outlet", score: +20, type: "correct-verify" },
+      { text: "Reject it — AI often gets dates wrong", score: -20, type: "under-trust" }
+    ],
+    feedbackCorrect: "Good calibration. These dates and the case name are historically accurate. For a student publication, quick verification is best practice, but your instinct to trust specific verifiable claims is well-calibrated. The AI is reliable on well-documented historical facts.",
+    feedbackUnderTrust: "Under-trust failure. Every specific claim here — the dates, the case name — is historically accurate and easily verifiable. Blanket distrust of AI historical outputs wastes time and misses the point. The question is never 'is this AI?' but 'how verifiable is this specific claim?'",
+    actualReliability: "Accurate — all facts verifiable"
+  },
+  {
+    title: "Current Events",
+    context: "A student asks you for help with a research paper on recent climate policy. You use the AI to get background.",
+    aiOutput: "As of 2024, the United States has rejoined the Paris Agreement and achieved its 2025 emissions reduction targets ahead of schedule. The Inflation Reduction Act has resulted in a 23% reduction in carbon emissions since 2022, according to EPA data released last month.",
+    choices: [
+      { text: "Share this with the student as research background", score: -30, type: "over-trust" },
+      { text: "Flag it as unverified — recent statistics need current sources", score: +25, type: "correct" },
+      { text: "Reject it entirely — AI can't know current events", score: -5, type: "under-trust" }
+    ],
+    feedbackCorrect: "Strong calibration. The AI has mixed real facts with fabricated statistics. The Paris Agreement rejoining is real; the specific emissions reduction figure and the 'released last month' framing are likely hallucinated. Recent statistics always require current source verification — the AI cannot access real-time EPA data.",
+    feedbackOverTrust: "Significant over-trust failure. The AI fabricated the specific percentage and attributed it to a recent EPA release. This is a classic hallucination pattern: confident, specific, plausible-sounding, and wrong. Recent statistics in a quickly-changing policy area are the highest-risk category for AI fabrication.",
+    feedbackUnderTrust: "Slight under-trust. Rejecting it entirely is too blunt. The Paris Agreement background is real. A more calibrated response: share verified elements, flag the statistics as requiring current sourcing.",
+    actualReliability: "Partially fabricated — statistics invented"
+  },
+  {
+    title: "Code Review",
+    context: "You need a Python function to clean and deduplicate a list of email addresses. You're not a developer.",
+    aiOutput: "def clean_emails(emails):\n    seen = set()\n    cleaned = []\n    for email in emails:\n        email = email.strip().lower()\n        if email not in seen and '@' in email:\n            seen.add(email)\n            cleaned.append(email)\n    return cleaned",
+    choices: [
+      { text: "Use it — the logic looks sound", score: +15, type: "correct" },
+      { text: "Test it on sample data before using in production", score: +25, type: "correct-verify" },
+      { text: "Reject it — I should hire a developer instead", score: -15, type: "under-trust" }
+    ],
+    feedbackCorrect: "Reasonable calibration. The code is logically correct for the described task. Testing on sample data is even better — but your instinct to trust well-structured code for a clear, bounded task is appropriate. AI code output for simple utility functions is generally reliable when the logic is readable.",
+    feedbackUnderTrust: "Under-trust failure. This is exactly the use case where AI code assistance is reliable: a simple, self-contained function with a clear specification. Rejecting it reflexively misses the actual calibration challenge — which is knowing when AI code is trustworthy, not assuming it never is.",
+    actualReliability: "Correct and functional"
+  },
+  {
+    title: "Legal Summary",
+    context: "A community member asks you to summarize their tenant rights under California law. You're helping them understand a notice they received.",
+    aiOutput: "Under California law, landlords must provide 60 days notice before eviction for tenants who have lived in a unit for over a year. The notice must be in writing and specify the reason for eviction. Tenants have the right to request a hearing within 10 days of receiving the notice.",
+    choices: [
+      { text: "Share this summary — California tenant law is well-documented", score: -25, type: "over-trust" },
+      { text: "Verify against official California courts or legal aid sources first", score: +25, type: "correct" },
+      { text: "Refuse to help — AI cannot provide legal information", score: -5, type: "under-trust" }
+    ],
+    feedbackCorrect: "Strong calibration. The AI's summary contains a significant error: California eviction notice requirements vary by jurisdiction, tenancy type, and reason for eviction — the 60-day figure and 10-day hearing right are oversimplified and potentially wrong for this tenant's situation. Legal information affecting housing always requires verification from official sources.",
+    feedbackOverTrust: "Serious over-trust failure. The AI's output has a pattern you'll see often: plausible, confident, and wrong in the details that matter most. California eviction law is complex and varies. The 'right to request a hearing within 10 days' claim is not universally accurate. Sharing this without verification could harm the person you're trying to help.",
+    feedbackUnderTrust: "Slight under-trust. Refusing entirely is too conservative — you can help orient someone to where to look. But you're right that AI legal summaries require verification. The better move: flag it as unverified and direct them to California Courts Self-Help Center.",
+    actualReliability: "Contains significant errors — oversimplified"
+  },
+  {
+    title: "Confidence Trap",
+    context: "You're writing an educational summary about a famous scientist. The AI responds very confidently.",
+    aiOutput: "Marie Curie was the first woman to win a Nobel Prize, winning in Physics in 1903. She was also the first person — male or female — to win Nobel Prizes in two different sciences, winning a second Prize in Chemistry in 1911 for her discovery of polonium and radium. She conducted much of her research in Paris with her husband Pierre, and her work laid the foundation for the understanding of radioactivity.",
+    choices: [
+      { text: "Use it — this is a famous historical figure, well-documented", score: +20, type: "correct" },
+      { text: "Verify the specific claims — confident tone doesn't mean accurate", score: +20, type: "correct-verify" },
+      { text: "Reject it — the confidence is suspicious", score: -20, type: "under-trust" }
+    ],
+    feedbackCorrect: "Good calibration. The output is accurate. Marie Curie's Nobel history — Physics in 1903, Chemistry in 1911 for polonium and radium — is historically correct. Highly-documented historical figures are one of AI's more reliable domains. You correctly identified this as a trustworthy output.",
+    feedbackUnderTrust: "Under-trust failure. Confident tone is not itself a red flag — it's a red flag when combined with unverifiable claims or a high-risk domain. Marie Curie's biographical facts are among the most well-documented in science history. Rejecting accurate outputs is just as miscalibrated as accepting inaccurate ones.",
+    actualReliability: "Accurate — well-documented history"
+  }
+];
+
+let currentScenario = 0;
+let score = 100;
+let decisions = [];
+
+function startTrial() {
+  document.getElementById('tt-intro').style.display = 'none';
+  document.getElementById('tt-trial').style.display = 'block';
+  loadScenario(0);
+}
+
+function loadScenario(idx) {
+  const s = scenarios[idx];
+  document.getElementById('tt-scenario-num').textContent = idx + 1;
+  document.getElementById('tt-scenario-title').textContent = s.title;
+  document.getElementById('tt-context').textContent = s.context;
+  document.getElementById('tt-ai-output').textContent = s.aiOutput;
+  document.getElementById('tt-trial').style.display = 'block';
+  document.getElementById('tt-feedback').style.display = 'none';
+
+  const choicesEl = document.getElementById('tt-choices');
+  choicesEl.innerHTML = '';
+  s.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = c.text;
+    btn.style.cssText = `background:white;border:1.5px solid #e2ddd6;padding:0.7rem 1rem;border-radius:6px;font-size:0.84rem;color:#1e1e1e;cursor:pointer;text-align:left;line-height:1.5;transition:border-color 0.15s,background 0.15s;`;
+    btn.onmouseover = () => { btn.style.borderColor = '#a03a1f'; btn.style.background = '#fdf8f5'; };
+    btn.onmouseout = () => { btn.style.borderColor = '#e2ddd6'; btn.style.background = 'white'; };
+    btn.onclick = () => makeChoice(idx, i);
+    choicesEl.appendChild(btn);
+  });
+
+  updateScoreDisplay();
+}
+
+function makeChoice(scenarioIdx, choiceIdx) {
+  const s = scenarios[scenarioIdx];
+  const c = s.choices[choiceIdx];
+  const prevScore = score;
+  score = Math.max(0, Math.min(100, score + c.score));
+
+  decisions.push({
+    title: s.title,
+    choice: c.text,
+    type: c.type,
+    delta: c.score,
+    actual: s.actualReliability
+  });
+
+  document.getElementById('tt-trial').style.display = 'none';
+  document.getElementById('tt-feedback').style.display = 'block';
+
+  const isGood = c.score > 0;
+  const icon = document.getElementById('tt-feedback-icon');
+  if (c.type === 'correct' || c.type === 'correct-verify') {
+    icon.style.background = '#1a6b72';
+    icon.textContent = '✓';
+  } else if (c.type === 'over-trust') {
+    icon.style.background = '#a03a1f';
+    icon.textContent = '↑';
+  } else {
+    icon.style.background = '#8a6518';
+    icon.textContent = '↓';
+  }
+
+  const headline = c.type === 'correct' || c.type === 'correct-verify' ? 'Well calibrated.' :
+                   c.type === 'over-trust' ? 'Over-trust failure.' : 'Under-trust failure.';
+  document.getElementById('tt-feedback-headline').textContent = headline;
+
+  const feedbackText = c.type === 'correct' || c.type === 'correct-verify' ? s.feedbackCorrect :
+                       c.type === 'over-trust' ? s.feedbackOverTrust : s.feedbackUnderTrust;
+  document.getElementById('tt-feedback-body').textContent = feedbackText;
+
+  const delta = c.score;
+  const changeEl = document.getElementById('tt-score-change');
+  changeEl.style.color = delta > 0 ? '#1a6b72' : '#a03a1f';
+  changeEl.textContent = (delta > 0 ? '+' : '') + delta + ' points → Score: ' + score + '/100';
+
+  const nextBtn = document.getElementById('tt-next-btn');
+  if (scenarioIdx === scenarios.length - 1) {
+    nextBtn.textContent = 'See Results →';
+  } else {
+    nextBtn.textContent = 'Next Scenario →';
+  }
+
+  updateScoreDisplay();
+}
+
+function nextScenario() {
+  currentScenario++;
+  if (currentScenario >= scenarios.length) {
+    showResults();
+  } else {
+    document.getElementById('tt-feedback').style.display = 'none';
+    document.getElementById('tt-trial').style.display = 'block';
+    loadScenario(currentScenario);
+  }
+}
+
+function showResults() {
+  document.getElementById('tt-feedback').style.display = 'none';
+  document.getElementById('tt-results').style.display = 'block';
+  document.getElementById('tt-final-score').textContent = score;
+
+  let overTrust = decisions.filter(d => d.type === 'over-trust').length;
+  let underTrust = decisions.filter(d => d.type === 'under-trust').length;
+  let calibrationType, reflectionPrompt;
+
+  if (score >= 85) {
+    calibrationType = 'Well Calibrated';
+    reflectionPrompt = 'Your decisions tracked the actual reliability of the AI outputs closely. Reflect: which scenario felt most uncertain? What information would have changed your decision?';
+  } else if (overTrust > underTrust) {
+    calibrationType = 'Over-Trusting';
+    reflectionPrompt = 'You tended to trust AI outputs more than warranted. Reflect: what made the outputs feel reliable? What signals did you miss that indicated they needed verification?';
+  } else if (underTrust > overTrust) {
+    calibrationType = 'Under-Trusting';
+    reflectionPrompt = 'You tended to distrust AI outputs even when they were reliable. Reflect: is your skepticism consistent, or does it apply to some topics more than others? What would it take to trust an AI output?';
+  } else {
+    calibrationType = 'Inconsistently Calibrated';
+    reflectionPrompt = 'Your trust decisions were inconsistent across scenarios. Reflect: what patterns do you notice in the scenarios where you were well-calibrated vs. where you weren\'t? What was different about those situations?';
+  }
+
+  document.getElementById('tt-calibration-label').textContent = calibrationType;
+  document.getElementById('tt-reflection-prompt').textContent = reflectionPrompt;
+
+  const log = document.getElementById('tt-decision-log');
+  log.innerHTML = '';
+  decisions.forEach((d, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:24px 1fr auto;gap:0.5rem;align-items:center;padding:0.5rem 0;border-bottom:1px solid #e2ddd6;font-size:0.8rem;';
+    const dotColor = d.delta > 0 ? '#1a6b72' : '#a03a1f';
+    row.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:${dotColor};margin:0 auto;"></div><div style="color:#4a4a4a;">${d.title}</div><div style="font-family:'Source Code Pro',monospace;color:${dotColor};font-size:0.72rem;">${d.delta > 0 ? '+' : ''}${d.delta}</div>`;
+    log.appendChild(row);
+  });
+}
+
+function updateScoreDisplay() {
+  document.getElementById('tt-score-display').textContent = score;
+  document.getElementById('tt-score-bar').style.width = score + '%';
+  document.getElementById('tt-score-bar').style.background = score >= 75 ? '#1a6b72' : score >= 50 ? '#8a6518' : '#a03a1f';
+}
+
+function resetTrial() {
+  currentScenario = 0;
+  score = 100;
+  decisions = [];
+  document.getElementById('tt-results').style.display = 'none';
+  document.getElementById('tt-intro').style.display = 'block';
+}
+</script>
+
+<div class="page-footer">
+  Cedric Lee · Curriculum Portfolio · 2025–26
+</div>
+
+</body>
+</html>

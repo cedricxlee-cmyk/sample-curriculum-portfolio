@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lost Places — Archive the Stories Before They're Gone</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --parchment: #f4ede0;
+  --ink: #1c1208;
+  --ink2: #3d2b1f;
+  --faded: #9a8878;
+  --red: #8b1a1a;
+  --teal: #1a6b72;
+  --gold: #8a6518;
+  --forest: #2a4a1f;
+  --border: #c8b89a;
+  --surface: rgba(255,255,255,0.55);
+  --map-water: #a8c8d8;
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--parchment);
+  color: var(--ink);
+  display: flex; flex-direction: column; height: 100vh;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px; text-align: center;
+}
+#title-screen { background: var(--ink); }
+
+.title-seal { font-size: 64px; margin-bottom: 12px; animation: seal-spin 20s linear infinite; }
+@keyframes seal-spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.title-org { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+.title-main { font-family: Georgia, serif; font-size: clamp(28px,6vw,48px); font-weight: 700; color: #f4ede0; line-height: 1.15; margin-bottom: 6px; }
+.title-sub { font-size: 14px; color: rgba(255,255,255,0.5); font-style: italic; margin-bottom: 24px; }
+.title-rule { width: 160px; height: 1px; background: rgba(255,255,255,0.15); margin: 0 auto 20px; }
+
+.brief-scroll {
+  background: var(--parchment); border-radius: 8px; padding: 20px 24px;
+  max-width: 460px; width: 100%; text-align: left;
+  margin-bottom: 24px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+}
+.bs-title { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faded); margin-bottom: 12px; font-family: 'Courier New', monospace; }
+.bs-body { font-size: 13px; color: var(--ink2); line-height: 1.75; }
+.bs-body strong { color: var(--red); }
+
+.title-btn {
+  background: var(--parchment); color: var(--ink); border: none;
+  padding: 14px 40px; border-radius: 4px;
+  font-family: Georgia, serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.05em;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 0.15s;
+}
+.title-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
+
+/* ── HUD ── */
+#hud {
+  background: var(--ink); color: var(--parchment);
+  padding: 8px 18px; display: none;
+  align-items: center; justify-content: space-between;
+  flex-shrink: 0; gap: 12px; flex-wrap: wrap;
+}
+.hud-item { }
+.hud-key { font-family: 'Courier New', monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 2px; }
+.hud-val { font-size: 16px; font-weight: 700; color: var(--parchment); }
+
+.urgency-bar { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 120px; }
+.ub-track { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.ub-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease, background 0.4s; }
+
+.archive-slots { display: flex; gap: 4px; }
+.aslot { width: 14px; height: 14px; border-radius: 2px; border: 1.5px solid rgba(255,255,255,0.2); transition: all 0.3s; }
+.aslot.filled { background: var(--gold); border-color: var(--gold); }
+
+/* ── MAIN LAYOUT ── */
+#game-layout { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+
+/* ── MAP HEADER ── */
+#map-header {
+  background: var(--ink2); color: var(--parchment);
+  padding: 8px 18px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.mh-title { font-size: 13px; font-weight: 700; font-style: italic; }
+.mh-county { font-family: 'Courier New', monospace; font-size: 11px; color: rgba(255,255,255,0.5); margin-left: 8px; }
+.mh-urgency { margin-left: auto; font-family: 'Courier New', monospace; font-size: 10px; color: rgba(255,220,100,0.8); letter-spacing: 0.06em; }
+
+/* ── GAME CONTENT ── */
+#game-content { display: grid; grid-template-columns: 220px 1fr; flex: 1; overflow: hidden; }
+@media (max-width: 680px) { #game-content { grid-template-columns: 1fr; } }
+
+/* MAP SIDEBAR */
+#map-panel {
+  border-right: 1px solid var(--border);
+  background: rgba(168,200,216,0.08);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+.map-label { padding: 10px 12px; font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faded); border-bottom: 1px solid var(--border); }
+
+#county-map { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+.county-pin {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s; background: rgba(255,255,255,0.5);
+  text-align: left;
+}
+.county-pin:hover { background: rgba(255,255,255,0.85); border-color: var(--teal); }
+.county-pin.active { background: white; border-color: var(--teal); box-shadow: 0 2px 10px rgba(26,107,114,0.15); }
+.county-pin.archived { border-color: var(--forest); background: rgba(42,74,31,0.06); }
+.county-pin.locked { opacity: 0.4; cursor: not-allowed; }
+.county-pin.threatened { border-color: var(--red); background: rgba(139,26,26,0.04); }
+
+.pin-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.pin-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.pin-status { font-family: 'Courier New', monospace; font-size: 9px; color: var(--faded); letter-spacing: 0.06em; }
+.pin-badge { font-family: 'Courier New', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 6px; border-radius: 2px; margin-top: 3px; display: inline-block; }
+.pb-threat { background: rgba(139,26,26,0.12); color: var(--red); }
+.pb-done { background: rgba(42,74,31,0.12); color: var(--forest); }
+
+/* MAIN INVESTIGATION PANEL */
+#main-panel { display: flex; flex-direction: column; overflow: hidden; }
+#main-scroll { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+/* WITNESS CARD */
+.witness-card {
+  background: white; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.wc-header {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  background: rgba(244,237,224,0.6); display: flex; align-items: center; gap: 10px;
+}
+.wc-grade { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--faded); text-transform: uppercase; }
+.wc-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.wc-county-tag { margin-left: auto; font-family: 'Courier New', monospace; font-size: 9px; color: var(--teal); border: 1px solid rgba(26,107,114,0.3); padding: 2px 8px; border-radius: 3px; }
+
+.wc-testimony {
+  padding: 14px; font-size: 14px; line-height: 1.8; color: var(--ink2);
+  font-style: italic; border-bottom: 1px solid var(--border);
+}
+.wc-testimony .highlight { background: rgba(138,101,24,0.12); border-bottom: 1px solid var(--gold); padding: 0 2px; }
+
+.wc-verdict-q { padding: 12px 14px; font-size: 13px; color: var(--ink); font-weight: 700; border-bottom: 1px solid var(--border); }
+.wc-choices { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+.wc-choice {
+  padding: 10px 14px; border-radius: 6px; border: 1.5px solid var(--border);
+  background: white; color: var(--ink); font-size: 12px; font-family: Georgia, serif;
+  cursor: pointer; text-align: left; transition: all 0.15s; line-height: 1.5;
+}
+.wc-choice:hover { border-color: var(--teal); background: rgba(26,107,114,0.04); }
+.wc-choice.chosen-correct { border-color: var(--forest); background: rgba(42,74,31,0.06); pointer-events: none; }
+.wc-choice.chosen-wrong { border-color: var(--red); background: rgba(139,26,26,0.04); pointer-events: none; }
+.wc-choice.dim-out { pointer-events: none; opacity: 0.35; }
+.wc-feedback {
+  padding: 12px 14px; border-top: 1px solid var(--border); font-size: 12px;
+  line-height: 1.65; display: none;
+}
+.wc-feedback.show { display: block; }
+.wc-feedback.correct-fb { background: rgba(42,74,31,0.05); color: var(--forest); }
+.wc-feedback.wrong-fb { background: rgba(139,26,26,0.05); color: var(--red); }
+
+/* ARCHIVE DECISION */
+.archive-decision {
+  display: none; padding: 12px 14px; border-top: 1px solid var(--border);
+  gap: 10px; flex-wrap: wrap;
+}
+.archive-decision.show { display: flex; }
+.archive-btn {
+  padding: 9px 18px; border-radius: 4px; border: none;
+  font-family: Georgia, serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.03em;
+}
+.ab-yes { background: var(--forest); color: white; }
+.ab-yes:hover { background: #1e3a15; }
+.ab-no { background: rgba(139,26,26,0.1); color: var(--red); border: 1px solid rgba(139,26,26,0.25); }
+.ab-no:hover { background: rgba(139,26,26,0.18); }
+.archive-decision-note { font-size: 11px; color: var(--faded); line-height: 1.5; font-style: italic; align-self: center; }
+
+/* INTRO CARD */
+.location-intro {
+  background: rgba(26,107,114,0.05); border: 1px solid rgba(26,107,114,0.2);
+  border-radius: 8px; padding: 14px 16px;
+}
+.li-county { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+.li-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.li-desc { font-size: 13px; color: var(--ink2); line-height: 1.65; }
+.li-threat { font-family: 'Courier New', monospace; font-size: 10px; color: var(--red); margin-top: 8px; letter-spacing: 0.05em; }
+
+/* ARCHIVE LEDGER */
+#ledger-panel {
+  background: rgba(244,237,224,0.6); border-top: 1px solid var(--border);
+  padding: 10px 16px; flex-shrink: 0;
+}
+.ledger-label { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faded); margin-bottom: 6px; }
+#ledger-items { display: flex; gap: 6px; flex-wrap: wrap; }
+.ledger-item {
+  font-family: 'Courier New', monospace; font-size: 9px;
+  padding: 3px 8px; border-radius: 3px;
+  background: rgba(42,74,31,0.1); color: var(--forest);
+  border: 1px solid rgba(42,74,31,0.2); letter-spacing: 0.05em;
+}
+
+/* RESULTS */
+#results-screen {
+  display: none; background: var(--ink);
+  overflow-y: auto; align-items: flex-start; padding-top: 32px;
+}
+.results-inner { max-width: 580px; width: 100%; margin: 0 auto; padding: 0 20px 40px; }
+.res-org { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+.res-title { font-size: clamp(24px,5vw,38px); font-weight: 700; color: var(--parchment); margin-bottom: 4px; font-style: italic; }
+.res-sub { font-size: 12px; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace; letter-spacing: 0.1em; margin-bottom: 24px; }
+.res-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+.res-stat { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 14px; text-align: center; }
+.rs-n { font-size: 30px; font-weight: 700; font-family: Georgia, serif; color: #e8d5a0; margin-bottom: 4px; }
+.rs-l { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+.archived-list { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+.al-header { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+.al-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.al-item:last-child { border-bottom: none; }
+.ali-title { font-size: 13px; font-weight: 700; color: var(--parchment); font-style: italic; margin-bottom: 2px; }
+.ali-meta { font-family: 'Courier New', monospace; font-size: 10px; color: rgba(255,255,255,0.4); }
+.res-reflection { background: rgba(138,101,24,0.1); border: 1px solid rgba(138,101,24,0.25); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.rr-l { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: #e8d5a0; margin-bottom: 8px; }
+.rr-t { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.65; }
+.res-btn { width: 100%; padding: 13px; background: var(--parchment); color: var(--ink); border: none; border-radius: 4px; font-family: Georgia, serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; margin-bottom: 24px; }
+.res-btn:hover { opacity: 0.88; }
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div class="screen" id="title-screen">
+  <div class="title-seal">📜</div>
+  <div class="title-org">Northern California Historical Society · Archivist Division</div>
+  <div class="title-main">The Lost Places</div>
+  <div class="title-sub">Stories disappearing across nine counties. You have one chance to preserve them.</div>
+  <div class="title-rule"></div>
+  <div class="brief-scroll">
+    <div class="bs-title">// Field Assignment Brief</div>
+    <div class="bs-body">You are a field archivist. Witnesses across Northern California have stories about places being lost — to development, to memory, to time. <strong>Travel county to county</strong>. Interview witnesses. Determine whether their story is <strong>archive-worthy</strong>. Collect the best ones before the places disappear forever.<br><br>You have <strong>8 slots</strong> in your archive. The places won't wait.</div>
+  </div>
+  <button class="title-btn" onclick="startGame()">Open the Archive →</button>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="results-screen">
+  <div class="results-inner">
+    <div class="res-org">Northern California Historical Society</div>
+    <div class="res-title" id="res-title">Archive Sealed.</div>
+    <div class="res-sub">Field Report · Final Edition</div>
+    <div class="res-stats">
+      <div class="res-stat"><div class="rs-n" id="rs-archived">0</div><div class="rs-l">Stories Archived</div></div>
+      <div class="res-stat"><div class="rs-n" id="rs-counties">0</div><div class="rs-l">Counties Covered</div></div>
+      <div class="res-stat"><div class="rs-n" id="rs-correct">0</div><div class="rs-l">Correct Verdicts</div></div>
+    </div>
+    <div class="archived-list">
+      <div class="al-header">Your Archive</div>
+      <div id="archive-final"></div>
+    </div>
+    <div class="res-reflection">
+      <div class="rr-l">Archivist's Note</div>
+      <div class="rr-t" id="rr-t"></div>
+    </div>
+    <button class="res-btn" onclick="location.reload()">Open New Archive →</button>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-item">
+    <div class="hud-key">County</div>
+    <div class="hud-val" id="hud-county">—</div>
+  </div>
+  <div class="urgency-bar">
+    <div class="hud-key" style="white-space:nowrap;">Time</div>
+    <div class="ub-track"><div class="ub-fill" id="ub-fill" style="width:100%;background:var(--teal);"></div></div>
+    <div class="hud-val" id="hud-time">8:00</div>
+  </div>
+  <div class="hud-item">
+    <div class="hud-key">Archive Slots</div>
+    <div class="archive-slots" id="archive-slots">
+      <div class="aslot"></div><div class="aslot"></div><div class="aslot"></div><div class="aslot"></div>
+      <div class="aslot"></div><div class="aslot"></div><div class="aslot"></div><div class="aslot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME LAYOUT -->
+<div id="game-layout">
+  <div id="map-header">
+    <div class="mh-title">Northern California — Field Investigation</div>
+    <div class="mh-county" id="mh-county">Select a county to begin</div>
+    <div class="mh-urgency" id="mh-urgency">⚠ PLACES AT RISK — ACT NOW</div>
+  </div>
+  <div id="game-content">
+    <div id="map-panel">
+      <div class="map-label">// County Map</div>
+      <div id="county-map"></div>
+    </div>
+    <div id="main-panel">
+      <div id="main-scroll">
+        <div class="location-intro" id="welcome-msg">
+          <div class="li-county">// Field Archivist Interface</div>
+          <div class="li-title">Select a county from the map to begin.</div>
+          <div class="li-desc">Each county has at least one witness with a story. Interview them. Assess the story. Decide whether to archive it. You have 8 archive slots and limited time.</div>
+          <div class="li-threat">⚠ Some places are being demolished soon — prioritize threatened sites.</div>
+        </div>
+      </div>
+      <div id="ledger-panel">
+        <div class="ledger-label">// Archive Ledger</div>
+        <div id="ledger-items"><span style="font-family:'Courier New',monospace;font-size:10px;color:var(--faded);">Empty — start collecting stories</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// LOCATION DATA — 9 Counties
+// ══════════════════════════════════════════════════
+const COUNTIES = [
+  {
+    id: 'butte', name: 'Butte County', icon: '🌲', threatened: true,
+    intro: 'Butte County: Mountain foothills, the town of Chico, and Paradise — a community still rebuilding after the 2018 Camp Fire.',
+    threat: '⚠ THREAT: The Honey Run Covered Bridge site faces demolition. Story collection urgent.',
+    witnesses: [
+      {
+        grade: 'Grade 4 · Maya T.', name: 'Interview: The Covered Bridge Memory',
+        county: 'Butte County',
+        testimony: `"My grandpa used to take me to <span class="highlight">the Honey Run Covered Bridge</span> on Saturday mornings. He'd let me throw pinecones off the side and we'd race them downstream. The bridge burned in the Camp Fire. I still drive past the spot where it was. <span class="highlight">There's nothing there now but I can still see it</span>."`,
+        question: 'Is this story worth archiving? What makes or breaks it?',
+        choices: [
+          { text: 'Yes — specific place + personal loss + the fire context gives it historical and emotional weight', correct: true },
+          { text: 'No — it\'s too simple, just a childhood memory with no historical significance', correct: false },
+          { text: 'Maybe — archive only if we can get a photo of the original bridge', correct: false }
+        ],
+        feedbackCorrect: '✓ Strong archival instinct. A child\'s memory of a specific place that no longer exists, tied to a historically significant disaster, is exactly what archives preserve. Official records document the fire. This documents what was lost.',
+        feedbackWrong: 'Personal memory IS historical significance. What we lose in disasters isn\'t just structures — it\'s the living relationships people had with those places. This story is precisely what a community archive exists to hold.',
+        archiveWorthy: true,
+        archiveEntry: { title: 'The Honey Run Bridge on Saturday Mornings', author: 'Maya T., Gr. 4', county: 'Butte' }
+      }
+    ]
+  },
+  {
+    id: 'tehama', name: 'Tehama County', icon: '🌾', threatened: false,
+    intro: 'Tehama County: Red Bluff, rolling rangeland, and some of the longest-established family ranches in Northern California.',
+    threat: '',
+    witnesses: [
+      {
+        grade: 'TK · Ana M.', name: 'Interview: The Ranch Road',
+        county: 'Tehama County',
+        testimony: `"My road. The dust comes up when a truck goes by. In the morning there are <span class="highlight">deer tracks in the mud by the gate</span>. Papa says when he was little <span class="highlight">the road was just dirt for miles and miles</span> and you could see the mountains from it. Now there are fences."`,
+        question: 'This is a TK student — very young, very short. Does it belong in a serious archive?',
+        choices: [
+          { text: 'No — too young, too vague. An archive needs adult voices and historical context', correct: false },
+          { text: 'Yes — the shortest, simplest testimony can hold the most specific truth. "Deer tracks in the mud by the gate" is irreplaceable.', correct: true },
+          { text: 'Only as a supplement to an adult interview about the same place', correct: false }
+        ],
+        feedbackCorrect: '✓ Correct. "Deer tracks in the mud by the gate" is not vague — it\'s radically specific. The most significant oral history collections include children\'s voices. A TK student\'s relationship to a place exists nowhere else.',
+        feedbackWrong: 'Age is not a proxy for archival value. "Deer tracks in the mud by the gate" is a specific, unrepeatable observation. The fence detail — a change the child has noticed — carries environmental and social history. Don\'t mistake simplicity for insignificance.',
+        archiveWorthy: true,
+        archiveEntry: { title: 'The Ranch Road in the Morning', author: 'Ana M., TK', county: 'Tehama' }
+      }
+    ]
+  },
+  {
+    id: 'shasta', name: 'Shasta County', icon: '🏔️', threatened: true,
+    intro: 'Shasta County: Redding, the Sacramento River, and Shasta Dam — a site of major displacement when the reservoir was created in the 1940s.',
+    threat: '⚠ THREAT: The old Wintu cultural site near Shasta Dam faces new development pressures.',
+    witnesses: [
+      {
+        grade: 'Grade 10 · Kai M.', name: 'Interview: Anderson River Park',
+        county: 'Shasta County',
+        testimony: `"My grandmother <span class="highlight">swam at Anderson River Park illegally in the 1960s</span>. Japanese Americans weren't welcome at the public pool. She came here because <span class="highlight">the river didn't have rules</span>. She said the cold water was the same cold for everyone. She's 88 now and still calls it 'her river.'"`,
+        question: 'This interview touches on racial segregation. How does that affect its archival value?',
+        choices: [
+          { text: 'It increases the value — this is living testimony to segregation-era California that connects a specific place to civil rights history', correct: true },
+          { text: 'It decreases the value — controversial topics might make the archive political', correct: false },
+          { text: 'Neutral — we\'d need to fact-check the segregation claim before archiving', correct: false }
+        ],
+        feedbackCorrect: '✓ Exactly right. Living memory of segregation connected to a specific, named place is among the most historically significant material an archive can hold. This is primary source testimony. "The river didn\'t have rules" is already a line worth preserving.',
+        feedbackWrong: 'Oral history archives exist precisely to hold stories that official records don\'t. This grandmother\'s testimony documents how segregation shaped access to public spaces in Northern California — a historical fact. "Controversial" and "historically significant" are not opposites.',
+        archiveWorthy: true,
+        archiveEntry: { title: '"The River Didn\'t Have Rules" — Anderson River Park', author: 'Kai M., Gr. 10', county: 'Shasta' }
+      }
+    ]
+  },
+  {
+    id: 'glenn', name: 'Glenn County', icon: '🌻', threatened: true,
+    intro: 'Glenn County: Orland, the Tehama-Colusa Canal, and some of the most agricultural land in the Sacramento Valley.',
+    threat: '⚠ THREAT: The Orland Community Pool site is being converted to commercial property.',
+    witnesses: [
+      {
+        grade: 'Grade 8 · James H.', name: 'Interview: The Orland Pool',
+        county: 'Glenn County',
+        testimony: `"My uncle said it was <span class="highlight">the only place in town where everyone mixed</span>. Black kids, white kids, farmworker kids — <span class="highlight">the chlorine was an equalizer</span>. It closed in 2001. He said when they drained it for the last time, a bunch of people just stood around the empty pool in silence. Nobody planned it. They just showed up."`,
+        question: 'The pool no longer exists. Is a memory of an empty pool worth archiving?',
+        choices: [
+          { text: 'No — we should only archive places that still exist so people can visit them', correct: false },
+          { text: 'Yes — the act of standing around the empty pool IS the story. Community loss is exactly what archives preserve.', correct: true },
+          { text: 'Only if we have photographs of the pool when it was open', correct: false }
+        ],
+        feedbackCorrect: '✓ Right. "The chlorine was an equalizer" and the spontaneous gathering around the empty pool are two of the most powerful archival moments in this collection. Archives exist because places disappear. That\'s the whole point.',
+        feedbackWrong: 'Archives are not tourism guides. They exist because places disappear and the only record left is memory. "They just showed up" — an unplanned gathering around an empty pool — is community history at its most honest.',
+        archiveWorthy: true,
+        archiveEntry: { title: 'The Orland Pool: The Chlorine Was an Equalizer', author: 'James H., Gr. 8', county: 'Glenn' }
+      }
+    ]
+  },
+  {
+    id: 'colusa', name: 'Colusa County', icon: '🌊', threatened: false,
+    intro: 'Colusa County: One of the least-populated counties in the valley. The Sacramento River runs through it.',
+    threat: '',
+    witnesses: [
+      {
+        grade: 'Grade 7 · David L.', name: 'Interview: The Sacramento River at Colusa',
+        county: 'Colusa County',
+        testimony: `"My grandfather fished here every weekend in the 1970s. He said <span class="highlight">the salmon runs were so thick you could almost walk on them</span>. Now it takes him <span class="highlight">three days to catch what he caught in a morning</span>. He still goes. He says he's fishing for the river he remembers."`,
+        question: 'This story contains an environmental data point embedded in personal testimony. Does that matter?',
+        choices: [
+          { text: 'Yes — "three days vs one morning" is an oral history data point about ecological change that official reports often miss', correct: true },
+          { text: 'No — we need scientific data, not one person\'s memory of fish counts', correct: false },
+          { text: 'Maybe — only if the grandfather can give us specific dates and measurements', correct: false }
+        ],
+        feedbackCorrect: '✓ Sharp thinking. Ecological change recorded through lived experience is exactly what official monitoring misses. "He\'s fishing for the river he remembers" is both a personal story and an environmental record. This is primary source environmental history.',
+        feedbackWrong: 'Oral history and scientific data are complementary, not competing. "So thick you could walk on them" documents an ecological baseline that no official record preserved. This grandfather\'s fishing memory IS environmental data — the kind that human beings actually remember.',
+        archiveWorthy: true,
+        archiveEntry: { title: '"Fishing for the River He Remembers" — Colusa', author: 'David L., Gr. 7', county: 'Colusa' }
+      }
+    ]
+  },
+  {
+    id: 'yolo', name: 'Yolo County', icon: '🏛️', threatened: false,
+    intro: 'Yolo County: Davis, Woodland, and one of California\'s most significant agricultural and university communities.',
+    threat: '',
+    witnesses: [
+      {
+        grade: 'Grade 12 · Mei L.', name: 'Interview: Woodland Chinatown Site',
+        county: 'Yolo County',
+        testimony: `"<span class="highlight">There's a parking lot where it used to be</span>. My great-great-grandfather ran a laundry here at the turn of the century. I brought a photo of the street as it was — twenty-three businesses, all Chinese-owned. Now it's a parking lot and nobody knows. I brought the photo because <span class="highlight">I was afraid if I didn't, nobody ever would</span>."`,
+        question: 'The student brought a photograph. Does that change how you evaluate the testimony?',
+        choices: [
+          { text: 'Yes — the photo makes it archivable; without it, it\'s just a claim', correct: false },
+          { text: 'The testimony stands alone. The photo is additional evidence, not the prerequisite.', correct: true },
+          { text: 'No — we shouldn\'t archive stories without corroborating documentation', correct: false }
+        ],
+        feedbackCorrect: '✓ Correct. "I was afraid if I didn\'t, nobody ever would" is the most important line in this interview. It explains why oral history exists. The photo is a gift. The testimony is what the archive was built for.',
+        feedbackWrong: 'The testimony is already complete without the photo. A parking lot where twenty-three Chinese-owned businesses once stood — told by a great-great-grandchild who kept a photograph — IS the archive. Documentation strengthens; it doesn\'t create.',
+        archiveWorthy: true,
+        archiveEntry: { title: 'The Parking Lot That Was Woodland Chinatown', author: 'Mei L., Gr. 12', county: 'Yolo' }
+      }
+    ]
+  },
+  {
+    id: 'sutter', name: 'Sutter County', icon: '🦢', threatened: false,
+    intro: 'Sutter County: Yuba City, the Sutter Buttes — the smallest mountain range in the world — and significant Hmong and Sikh communities.',
+    threat: '',
+    witnesses: [
+      {
+        grade: 'Grade 6 · Priya N.', name: 'Interview: The Gurdwara Field',
+        county: 'Sutter County',
+        testimony: `"Every Vaisakhi my whole family goes to the field behind the Gurdwara. They set up the langar outside and there's food and music and kids running everywhere. My grandmother says when they first came here from Punjab, this was the place that felt most like home. <span class="highlight">I don't know what Punjab looks like but I know what home feels like here</span>."`,
+        question: 'This story describes an ongoing tradition, not a place that\'s lost. Does it belong in an archive about disappearing places?',
+        choices: [
+          { text: 'No — the archive is for lost places, and this tradition is still active', correct: false },
+          { text: 'Yes — archives preserve what exists NOW before it\'s gone. Living traditions are the most urgent thing to document.', correct: true },
+          { text: 'Partially — archive only the grandmother\'s memory of Punjab, not the current celebration', correct: false }
+        ],
+        feedbackCorrect: '✓ The most important archival insight: you don\'t archive things only after they\'re gone. "I don\'t know what Punjab looks like but I know what home feels like here" is a line that belongs in this archive exactly because the tradition is still alive to be documented.',
+        feedbackWrong: 'Archives preserve the living as urgently as the lost. By the time something disappears, it\'s too late to document it from the inside. "I know what home feels like here" is more valuable now, while the tradition lives, than any retrospective account would be.',
+        archiveWorthy: true,
+        archiveEntry: { title: '"What Home Feels Like Here" — Gurdwara Field, Yuba City', author: 'Priya N., Gr. 6', county: 'Sutter' }
+      }
+    ]
+  },
+  {
+    id: 'sacramento', name: 'Sacramento County', icon: '🌉', threatened: false,
+    intro: 'Sacramento County: The state capital, Old Town, the confluence of the American and Sacramento Rivers.',
+    threat: '',
+    witnesses: [
+      {
+        grade: 'Grade 11 · Marcus T.', name: 'Interview: Yolo County Fairgrounds [Family]',
+        county: 'Sacramento Area',
+        testimony: `"Four generations of my family have shown animals at the Yolo County Fair. My great-great-grandmother <span class="highlight">won a ribbon for her goat in 1952</span>. I have the ribbon. It's faded pink now. My family keeps waiting for me to show something there. <span class="highlight">I don't know if I will. I don't know if that matters.</span> But I have the ribbon."`,
+        question: 'The student is uncertain about continuing the tradition. Does personal ambivalence make the story less archivable?',
+        choices: [
+          { text: 'Yes — archives should capture traditions at their strongest, not during decline', correct: false },
+          { text: 'No — ambivalence IS the story. The moment of uncertain transmission is historically significant.', correct: true },
+          { text: 'Maybe — follow up in five years when the student has decided', correct: false }
+        ],
+        feedbackCorrect: '✓ The uncertainty is the most archivable part. "I don\'t know if that matters" is what tradition-ending actually sounds like from the inside. Most traditions don\'t end with a decision — they end with someone not quite sure if they\'ll continue. That uncertainty is history.',
+        feedbackWrong: '"I don\'t know if I will" is the archive\'s most important moment. Traditions are alive precisely when their continuation is uncertain. A faded pink ribbon from 1952 held by someone unsure whether to carry the legacy forward — this IS the story of cultural transmission.',
+        archiveWorthy: true,
+        archiveEntry: { title: 'The Faded Pink Ribbon: Four Generations at the Fair', author: 'Marcus T., Gr. 11', county: 'Sacramento Area' }
+      }
+    ]
+  },
+  {
+    id: 'plumas', name: 'Plumas County', icon: '⛰️', threatened: true,
+    intro: 'Plumas County: Remote mountain communities, Feather River Canyon, and towns still recovering from recent wildfires.',
+    threat: '⚠ THREAT: Several mountain communities are being abandoned after repeated fires. Stories are leaving with the people.',
+    witnesses: [
+      {
+        grade: 'Grade 5 · Sofia G.', name: 'Interview: The Old Noonan Ranch',
+        county: 'Plumas County',
+        testimony: `"My great-grandmother <span class="highlight">homesteaded here in 1921</span>. The original barn is still standing — barely. She told my grandmother it <span class="highlight">smelled like the best version of everything</span> when she arrived: pine, fresh wood, horse, smoke. My family keeps trying to fix the barn but it keeps leaning. We don't know how much longer."`,
+        question: 'The barn is still standing but barely. Does physical fragility make the story more or less urgent to archive?',
+        choices: [
+          { text: 'Less urgent — wait until the barn falls to capture the loss properly', correct: false },
+          { text: 'More urgent — "we don\'t know how much longer" is exactly when archives matter most', correct: true },
+          { text: 'No difference — the story has the same value whenever we collect it', correct: false }
+        ],
+        feedbackCorrect: '✓ Correct. "Smelled like the best version of everything" is gone the moment that barn falls. The time to archive a living place is before it becomes a memory. This story — still present-tense, still in process — is more valuable than any retrospective account would be.',
+        feedbackWrong: 'Timing is everything in archives. "We don\'t know how much longer" is the archivist\'s call to act. Once the barn falls, the story becomes past tense. While someone can still say "my family keeps trying to fix it," the archive can hold something irreplaceable.',
+        archiveWorthy: true,
+        archiveEntry: { title: '"Smelled Like the Best Version of Everything" — Noonan Ranch', author: 'Sofia G., Gr. 5', county: 'Plumas' }
+      }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+const MAX_ARCHIVE = 8;
+const TOTAL_TIME = 480; // 8 minutes
+
+let archive = [];
+let countyProgress = {}; // countyId -> { interviewed, archived, verdict }
+let currentCounty = null;
+let currentWitnessIdx = 0;
+let witnessAnswered = false;
+let timer = TOTAL_TIME;
+let timerInterval = null;
+let score = 0;
+let totalCorrect = 0;
+
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('game-layout').style.display = 'flex';
+  renderCountyMap();
+  startTimer();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timer--;
+    const m = Math.floor(timer / 60);
+    const s = timer % 60;
+    document.getElementById('hud-time').textContent = m + ':' + String(s).padStart(2,'0');
+    const pct = (timer / TOTAL_TIME) * 100;
+    const fill = document.getElementById('ub-fill');
+    fill.style.width = pct + '%';
+    fill.style.background = pct > 50 ? 'var(--teal)' : pct > 25 ? 'var(--gold)' : 'var(--red)';
+    if (timer <= 0) {
+      clearInterval(timerInterval);
+      showResults();
+    }
+  }, 1000);
+}
+
+function renderCountyMap() {
+  const container = document.getElementById('county-map');
+  container.innerHTML = '';
+  COUNTIES.forEach((county, i) => {
+    const prog = countyProgress[county.id];
+    const isActive = currentCounty && currentCounty.id === county.id;
+    const isDone = prog && prog.interviewed;
+    const isArchived = prog && prog.archived;
+
+    const pin = document.createElement('div');
+    pin.className = 'county-pin' + (isActive ? ' active' : '') + (isArchived ? ' archived' : '') + (county.threatened ? ' threatened' : '');
+
+    pin.innerHTML = `
+      <div class="pin-icon">${county.icon}</div>
+      <div>
+        <div class="pin-name">${county.name}</div>
+        <div class="pin-status">${isDone ? (isArchived ? 'Story archived' : 'Interviewed') : 'Witness waiting'}</div>
+        ${county.threatened ? '<div class="pin-badge pb-threat">⚠ THREATENED</div>' : ''}
+        ${isArchived ? '<div class="pin-badge pb-done">✓ Archived</div>' : ''}
+      </div>
+    `;
+    pin.onclick = () => selectCounty(county);
+    container.appendChild(pin);
+  });
+}
+
+function selectCounty(county) {
+  currentCounty = county;
+  document.getElementById('hud-county').textContent = county.name;
+  document.getElementById('mh-county').textContent = county.name + (county.threatened ? ' — ⚠ THREATENED' : '');
+  witnessAnswered = false;
+  renderMainPanel(county);
+  renderCountyMap();
+}
+
+function renderMainPanel(county) {
+  const scroll = document.getElementById('main-scroll');
+  scroll.innerHTML = '';
+  const prog = countyProgress[county.id] || {};
+
+  // Intro
+  const intro = document.createElement('div');
+  intro.className = 'location-intro';
+  intro.innerHTML = `<div class="li-county">// ${county.name.toUpperCase()}</div><div class="li-title">${county.icon} Field Interview</div><div class="li-desc">${county.intro}</div>${county.threat ? `<div class="li-threat">${county.threat}</div>` : ''}`;
+  scroll.appendChild(intro);
+
+  // Witness
+  const witness = county.witnesses[0];
+  const alreadyAnswered = prog.interviewed;
+  const wasArchived = prog.archived;
+
+  const wc = document.createElement('div');
+  wc.className = 'witness-card';
+
+  const choicesHTML = witness.choices.map((c, i) => {
+    let cls = 'wc-choice';
+    if (alreadyAnswered) cls += c.correct ? ' chosen-correct' : ' dim-out';
+    return `<button class="${cls}" onclick="answerWitness(${i})">${c.text}</button>`;
+  }).join('');
+
+  wc.innerHTML = `
+    <div class="wc-header">
+      <div>
+        <div class="wc-grade">${witness.grade}</div>
+        <div class="wc-name">${witness.name}</div>
+      </div>
+      <div class="wc-county-tag">${witness.county}</div>
+    </div>
+    <div class="wc-testimony">${witness.testimony}</div>
+    <div class="wc-verdict-q">🗂 Your archival judgment: ${witness.question}</div>
+    <div class="wc-choices">${choicesHTML}</div>
+    <div class="wc-feedback" id="wc-fb">${alreadyAnswered ? (prog.correct ? witness.feedbackCorrect : witness.feedbackWrong) : ''}</div>
+    ${alreadyAnswered ? '' : '<div class="archive-decision" id="arch-decision"><div class="archive-decision-note">Make your archival judgment above first.</div></div>'}
+  `;
+
+  if (alreadyAnswered) {
+    const fb = wc.querySelector('#wc-fb');
+    fb.className = 'wc-feedback show ' + (prog.correct ? 'correct-fb' : 'wrong-fb');
+
+    // Archive decision
+    if (!wasArchived && archive.length < MAX_ARCHIVE) {
+      const dec = document.createElement('div');
+      dec.className = 'archive-decision show';
+      dec.id = 'arch-decision';
+      dec.innerHTML = `
+        <button class="archive-btn ab-yes" onclick="archiveStory()">📚 Archive This Story</button>
+        <button class="archive-btn ab-no" onclick="skipStory()">Pass — Move On</button>
+        <div class="archive-decision-note">Once archived, it takes a slot. You have ${MAX_ARCHIVE - archive.length} remaining.</div>
+      `;
+      wc.appendChild(dec);
+    } else if (wasArchived) {
+      const dec = document.createElement('div');
+      dec.className = 'archive-decision show';
+      dec.innerHTML = '<div class="archive-decision-note" style="color:var(--forest);">✓ Archived. Move to the next county.</div>';
+      wc.appendChild(dec);
+    }
+    witnessAnswered = true;
+  }
+
+  scroll.appendChild(wc);
+}
+
+function answerWitness(choiceIdx) {
+  if (witnessAnswered) return;
+  witnessAnswered = true;
+
+  const county = currentCounty;
+  const witness = county.witnesses[0];
+  const choice = witness.choices[choiceIdx];
+  const correct = choice.correct;
+
+  // Update buttons
+  document.querySelectorAll('.wc-choice').forEach((btn, i) => {
+    btn.className = 'wc-choice ' + (witness.choices[i].correct ? 'chosen-correct' : i === choiceIdx && !correct ? 'chosen-wrong' : 'dim-out');
+  });
+
+  // Feedback
+  const fb = document.getElementById('wc-fb');
+  fb.className = 'wc-feedback show ' + (correct ? 'correct-fb' : 'wrong-fb');
+  fb.textContent = correct ? witness.feedbackCorrect : witness.feedbackWrong;
+
+  if (correct) totalCorrect++;
+
+  countyProgress[county.id] = { interviewed: true, archived: false, correct };
+
+  // Show archive decision
+  const existing = document.getElementById('arch-decision');
+  if (existing) existing.remove();
+
+  if (archive.length < MAX_ARCHIVE) {
+    const dec = document.createElement('div');
+    dec.className = 'archive-decision show';
+    dec.id = 'arch-decision';
+    dec.innerHTML = `
+      <button class="archive-btn ab-yes" onclick="archiveStory()">📚 Archive This Story</button>
+      <button class="archive-btn ab-no" onclick="skipStory()">Pass — Move On</button>
+      <div class="archive-decision-note">You have ${MAX_ARCHIVE - archive.length} slots remaining.</div>
+    `;
+    document.querySelector('.witness-card').appendChild(dec);
+  }
+
+  renderCountyMap();
+}
+
+function archiveStory() {
+  if (!currentCounty) return;
+  const witness = currentCounty.witnesses[0];
+  if (archive.length >= MAX_ARCHIVE) return;
+
+  archive.push({ ...witness.archiveEntry, countyId: currentCounty.id });
+  countyProgress[currentCounty.id].archived = true;
+
+  // Update slots
+  const slots = document.querySelectorAll('#archive-slots .aslot');
+  if (archive.length - 1 < slots.length) slots[archive.length - 1].classList.add('filled');
+
+  updateLedger();
+  renderCountyMap();
+
+  // Update decision area
+  const dec = document.getElementById('arch-decision');
+  if (dec) { dec.innerHTML = '<div class="archive-decision-note" style="color:var(--forest);">✓ Archived. Move to the next county.</div>'; }
+
+  if (archive.length >= MAX_ARCHIVE) setTimeout(showResults, 800);
+}
+
+function skipStory() {
+  const dec = document.getElementById('arch-decision');
+  if (dec) { dec.innerHTML = '<div class="archive-decision-note">Skipped. Select another county.</div>'; }
+}
+
+function updateLedger() {
+  const container = document.getElementById('ledger-items');
+  if (archive.length === 0) {
+    container.innerHTML = '<span style="font-family:\'Courier New\',monospace;font-size:10px;color:var(--faded);">Empty</span>';
+    return;
+  }
+  container.innerHTML = '';
+  archive.forEach(a => {
+    const item = document.createElement('div');
+    item.className = 'ledger-item';
+    item.textContent = a.county + ': ' + a.title.substring(0, 30) + '…';
+    container.appendChild(item);
+  });
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('game-layout').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'flex';
+
+  document.getElementById('rs-archived').textContent = archive.length;
+  const counties = new Set(archive.map(a => a.county));
+  document.getElementById('rs-counties').textContent = counties.size;
+  document.getElementById('rs-correct').textContent = totalCorrect + '/' + Object.keys(countyProgress).length;
+
+  let title = archive.length >= 6 ? 'Archive Sealed. Stories Preserved.' : archive.length >= 3 ? 'Partial Archive — Some Stories Saved.' : 'Thin Archive — Few Stories Preserved.';
+  document.getElementById('res-title').textContent = title;
+
+  const list = document.getElementById('archive-final');
+  if (archive.length === 0) {
+    list.innerHTML = '<div class="al-item"><div style="color:rgba(255,255,255,0.3);font-size:13px;">No stories archived.</div></div>';
+  } else {
+    archive.forEach(a => {
+      const item = document.createElement('div');
+      item.className = 'al-item';
+      item.innerHTML = `<div><div class="ali-title">${a.title}</div><div class="ali-meta">${a.author} · ${a.county}</div></div>`;
+      list.appendChild(item);
+    });
+  }
+
+  let reflection;
+  if (archive.length >= 7) {
+    reflection = "Strong archive. You preserved stories from across the region — personal memories, environmental records, testimony to segregation, living traditions. What you archived can\'t be reconstructed once the people who hold these stories are gone. That\'s why archives exist.";
+  } else if (archive.length >= 4) {
+    reflection = "A meaningful archive. Which stories did you choose to skip, and why? The decisions you didn\'t make are as telling as the ones you did. What would you look for in a second pass through these counties?";
+  } else {
+    reflection = "The archive has room. What stopped you from collecting more stories? Time? Uncertainty about what was worth archiving? The hesitation itself is worth reflecting on — every story you passed on represents a voice that might not be collected again.";
+  }
+  document.getElementById('rr-t').textContent = reflection;
+
+  localStorage.setItem('lostPlacesHS', Math.max(archive.length, parseInt(localStorage.getItem('lostPlacesHS') || '0')));
+}
+</script>
+</body>
+</html>
